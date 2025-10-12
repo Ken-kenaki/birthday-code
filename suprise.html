@@ -946,8 +946,8 @@
     <div class="music-player">
       <button class="music-toggle" id="music-toggle">♪</button>
       <div class="music-info" id="music-info">Music: On</div>
-      <audio id="background-music" loop>
-        <source src="photos/birthday.mp3" type="audio/mpeg">
+      <audio id="background-music" loop autoplay>
+        <source src="photos/birthday.mp3" type="audio/mpeg" />
         Your browser does not support the audio element.
       </audio>
     </div>
@@ -1134,48 +1134,7 @@
     </div>
 
     <script>
-      // Music Player
-      const musicToggle = document.getElementById("music-toggle");
-      const musicInfo = document.getElementById("music-info");
-      const backgroundMusic = document.getElementById("background-music");
-      let isMusicPlaying = true;
 
-      // Start music automatically but muted (due to browser autoplay policies)
-      backgroundMusic.volume = 0.5;
-      backgroundMusic.muted = false;
-      
-      // Try to play music when user interacts with the page
-      function enableMusic() {
-        if (!isMusicPlaying) {
-          backgroundMusic.muted = true;
-          backgroundMusic.play().then(() => {
-            isMusicPlaying = false;
-            musicToggle.textContent = "♫";
-            musicInfo.textContent = "Music: On";
-          }).catch(e => {
-            console.log("Autoplay prevented:", e);
-          });
-        }
-      }
-
-      // Add event listeners for user interaction
-      document.addEventListener('click', enableMusic);
-      document.addEventListener('touchstart', enableMusic);
-
-      // Toggle music on/off
-      musicToggle.addEventListener("click", function() {
-        if (isMusicPlaying) {
-          backgroundMusic.pause();
-          musicToggle.textContent = "♪";
-          musicInfo.textContent = "Music: Off";
-        } else {
-          backgroundMusic.muted = false;
-          backgroundMusic.play();
-          musicToggle.textContent = "♫";
-          musicInfo.textContent = "Music: On";
-        }
-        isMusicPlaying = !isMusicPlaying;
-      });
 
       // Navigation
       const pages = document.querySelectorAll(".page");
