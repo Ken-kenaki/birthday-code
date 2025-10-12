@@ -192,8 +192,9 @@
         transform-style: preserve-3d;
         transition: transform 1s;
         z-index: 10;
+        cursor: pointer;
       }
-      .card:hover {
+      .card.flipped {
         transform: rotateY(180deg);
       }
       .card-front,
@@ -956,11 +957,11 @@
     <div class="page page-1" id="page-1">
       <div class="rose-bg"></div>
       <h1 class="page-title">Birthday Card❤️</h1>
-      <div class="card">
+      <div class="card" id="birthday-card">
         <div class="card-front">
           <div class="envelope">🎉</div>
           <h2>Happy Birthday! Bebo</h2>
-          <p>Hover over to open</p>
+          <p>Click to open</p>
         </div>
         <div class="card-back">
           <h2>Special Birthday Note</h2>
@@ -1134,7 +1135,11 @@
     </div>
 
     <script>
-
+      // Card flip functionality
+      const birthdayCard = document.getElementById("birthday-card");
+      birthdayCard.addEventListener("click", function() {
+        this.classList.toggle("flipped");
+      });
 
       // Navigation
       const pages = document.querySelectorAll(".page");
