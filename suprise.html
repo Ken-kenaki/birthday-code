@@ -947,7 +947,7 @@
       <button class="music-toggle" id="music-toggle">♪</button>
       <div class="music-info" id="music-info">Music: On</div>
       <audio id="background-music" loop>
-        <source src="photos/birthday.mp3" type="audio/mpeg">
+        <source src="photos/birthday.mp3s" type="audio/mpeg">
         Your browser does not support the audio element.
       </audio>
     </div>
@@ -1138,18 +1138,18 @@
       const musicToggle = document.getElementById("music-toggle");
       const musicInfo = document.getElementById("music-info");
       const backgroundMusic = document.getElementById("background-music");
-      let isMusicPlaying = false;
+      let isMusicPlaying = true;
 
       // Start music automatically but muted (due to browser autoplay policies)
       backgroundMusic.volume = 0.5;
-      backgroundMusic.muted = true;
+      backgroundMusic.muted = false;
       
       // Try to play music when user interacts with the page
       function enableMusic() {
         if (!isMusicPlaying) {
-          backgroundMusic.muted = false;
+          backgroundMusic.muted = true;
           backgroundMusic.play().then(() => {
-            isMusicPlaying = true;
+            isMusicPlaying = false;
             musicToggle.textContent = "♫";
             musicInfo.textContent = "Music: On";
           }).catch(e => {
