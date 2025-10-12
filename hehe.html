@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Surprise</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Poppins',sans-serif;overflow-x:hidden;width:100vw;min-height:100vh;background:#ffeaea;}
+.page{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;transition:transform 1s cubic-bezier(0.77,0,0.175,1);transform-style:preserve-3d;overflow-y:auto;}
+.page.hidden{visibility:hidden;opacity:0;transform:rotateY(180deg);}
+.nav-buttons{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:20px;z-index:100;}
+.nav-button{width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,0.8);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 5px 15px rgba(0,0,0,0.1);}
+.nav-button:hover{transform:scale(1.1);box-shadow:0 10px 20px rgba(0,0,0,0.2);}
+.page-dots{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:100;}
+.page-dot{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.5);cursor:pointer;transition:all 0.3s ease;}
+.page-dot.active{background:white;transform:scale(1.3);}
+
+/* Rose background pattern */
+.rose-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 20% 30%, rgba(255, 182, 193, 0.3) 0%, rgba(255, 182, 193, 0.3) 20%, transparent 20%),
+        radial-gradient(circle at 80% 70%, rgba(255, 182, 193, 0.3) 0%, rgba(255, 182, 193, 0.3) 20%, transparent 20%),
+        radial-gradient(circle at 40% 80%, rgba(255, 182, 193, 0.3) 0%, rgba(255, 182, 193, 0.3) 15%, transparent 15%),
+        radial-gradient(circle at 70% 20%, rgba(255, 182, 193, 0.3) 0%, rgba(255, 182, 193, 0.3) 15%, transparent 15%),
+        radial-gradient(circle at 10% 50%, rgba(255, 182, 193, 0.3) 0%, rgba(255, 182, 193, 0.3) 12%, transparent 12%),
+        radial-gradient(circle at 90% 40%, rgba(255, 182, 193, 0.3) 0%, rgba(255, 182, 193, 0.3) 12%, transparent 12%);
+    background-size: 200px 200px;
+    opacity: 0.6;
+    z-index: 0;
+}
+
+/* PAGE 1 - Birthday Card */
+.page-1{background:linear-gradient(135deg,#f9c1c1,#ffd9d9,#ffeaea);display:flex;align-items:center;justify-content:center;}
+.card{width:320px;height:400px;background:white;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,0.2);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;transform-style:preserve-3d;transition:transform 1s;z-index:10;}
+.card:hover{transform:rotateY(180deg);}
+.card-front,.card-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:20px;}
+.card-back{transform:rotateY(180deg);background:linear-gradient(135deg,#f9a1c1,#f58fc3);color:white;}
+.envelope{font-size:70px;margin-bottom:15px;animation:pulse 2s infinite;}
+@keyframes pulse{0%{transform:scale(1);}50%{transform:scale(1.1);}100%{transform:scale(1);}}
+
+/* PAGE 2 - Typing Message */
+.page-2{background:linear-gradient(135deg,#fceabb,#f8b500,#f6a0c4);display:flex;align-items:center;justify-content:center;}
+.typing-box{width:90%;max-width:700px;background:rgba(255,255,255,0.8);border-radius:20px;padding:30px;box-shadow:0 10px 25px rgba(0,0,0,0.15);font-size:1.2rem;line-height:1.8;position:relative;overflow:hidden;font-family:'Poppins',sans-serif;z-index:10;}
+.typing-box::after{content:'|';position:absolute;right:10px;animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+
+/* PAGE 3 - Points with floating hearts */
+.page-3{background:linear-gradient(135deg,#c1f9f4,#d9fff7,#eafaff);flex-wrap:wrap;justify-content:center;gap:20px;}
+.point-box{background:white;padding:15px 20px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,0.15);font-size:1.1rem;display:flex;align-items:center;gap:10px;position:relative;z-index:10;}
+.floating-heart{position:absolute;font-size:20px;pointer-events:none;animation:floatUp 4s linear forwards;opacity:0;z-index:1;}
+@keyframes floatUp{0%{transform:translateY(0) rotate(0deg);opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{transform:translateY(-100px) rotate(360deg);opacity:0;}}
+
+/* PAGE 4 - Gallery */
+.page-4{background:linear-gradient(135deg,#ffe1f9,#ffd1e9,#ffc1dd);flex-direction:column;align-items:center;justify-content:flex-start;padding-top:50px;overflow-y:auto;}
+.gallery-container{display:flex;flex-wrap:wrap;gap:20px;justify-content: center;width:90%;max-width:1200px;margin-bottom:100px;z-index:10;}
+.photo-card{position:relative;width:calc(33.333% - 20px);border-radius:15px;overflow:hidden;cursor:pointer;background:#fff;box-shadow:0 5px 20px rgba(0,0,0,0.15);transition:all 0.3s;display:flex;flex-direction:column;}
+.photo-card img,.photo-card video{width:100%;height:200px;object-fit:cover;transition:all 0.3s;}
+.photo-card-caption{background:rgba(255,255,255,0.9);padding:10px;text-align:center;font-weight:600;color:#ff6b6b;}
+.photo-card:hover{transform:scale(1.05);}
+
+/* Expanded media styles */
+.media-expanded{position:relative;width:100%;border-radius:15px;overflow:hidden;background:#fff;box-shadow:0 10px 30px rgba(0,0,0,0.2);margin:20px 0;}
+.media-expanded img,.media-expanded video{width:100%;max-height:70vh;object-fit:contain;display:block;}
+.media-expanded-caption{background:rgba(255,255,255,0.9);padding:15px;text-align:center;font-weight:600;color:#ff6b6b;font-size:1.2rem;}
+.close-expanded{position:absolute;top:10px;right:10px;background:rgba(255,255,255,0.8);border:none;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.5rem;z-index:10;}
+
+/* PAGE 5 - Cute Calendar */
+
+.cute-calendar{background:white;padding:15px;border-radius:25px;box-shadow:0 15px 35px rgba(0,0,0,0.15);position:relative;z-index:10;border:3px solid #ffb6c1;max-width:400px;width:90%;}
+.calendar-header{text-align:center;margin-bottom:20px;color:#ff6b6b;font-weight:700;font-size:1.5rem;}
+.calendar-body{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:20px;}
+.calendar-day{text-align:center;padding:8px;border-radius:50%;font-weight:600;}
+.calendar-day.empty{visibility:hidden;}
+.calendar-day.birthday{background:#ff6b6b;color:white;animation:birthdayGlow 2s infinite;}
+@keyframes birthdayGlow{0%,100%{box-shadow:0 0 5px #ff6b6b;}50%{box-shadow:0 0 20px #ff6b6b,0 0 30px #ff6b6b;}}
+.calendar-footer{text-align:center;color:#ff6b6b;font-weight:600;font-size:1.2rem;}
+.calendar-decoration{position:absolute;font-size:30px;z-index:1;}
+.calendar-decoration:nth-child(1){top:-15px;left:-15px;animation:bounce 2s infinite;}
+.calendar-decoration:nth-child(2){bottom:-15px;right:-15px;animation:bounce 2s infinite reverse;}
+.calendar-decoration:nth-child(3){top:-15px;right:-15px;animation:spin 3s infinite;}
+.calendar-decoration:nth-child(4){bottom:-15px;left:-15px;animation:spin 3s infinite reverse;}
+
+/* PAGE 6 - Sweet Messages with cute effects */
+
+.cute-message-box{background:rgba(255,255,255,0.9);padding:40px;border-radius:25px;box-shadow:0 15px 35px rgba(0,0,0,0.1);text-align:center;max-width:600px;position:relative;z-index:10;border:3px solid #ff85a2;}
+.cute-message-box::before{content:'💕';position:absolute;top:-20px;left:-20px;font-size:40px;animation:wiggle 2s infinite;}
+.cute-message-box::after{content:'✨';position:absolute;bottom:-15px;right:-15px;font-size:30px;animation:sparkle 3s infinite;}
+@keyframes wiggle{0%,100%{transform:rotate(-10deg);}50%{transform:rotate(10deg);}}
+@keyframes sparkle{0%,100%{opacity:0.7;transform:scale(1);}50%{opacity:1;transform:scale(1.3);}}
+.bouncing-heart{position:absolute;font-size:25px;animation:bounceHeart 5s infinite;opacity:0;z-index:1;}
+@keyframes bounceHeart{0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{transform:translateY(-100vh) translateX(50px) rotate(360deg);opacity:0;}}
+
+/* PAGE 7 - Cute Moments with floating elements */
+
+.cute-moments-box{background:rgba(255,255,255,0.9);padding:40px;border-radius:25px;box-shadow:0 15px 35px rgba(0,0,0,0.1);text-align:center;max-width:600px;position:relative;z-index:10;border:3px solid #85c1ff;}
+.cute-moments-box::before{content:'🐾';position:absolute;top:-25px;left:50%;transform:translateX(-50%);font-size:40px;animation:jump 2s infinite;}
+@keyframes jump{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-10px);}}
+.floating-emoji{position:absolute;font-size:30px;animation:floatEmoji 6s infinite;opacity:0;z-index:1;}
+@keyframes floatEmoji{0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{transform:translateY(-100vh) translateX(100px) rotate(360deg);opacity:0;}}
+
+/* PAGE 8 - Celebrate with enhanced effects */
+
+.celebrate-box{background:rgba(255,255,255,0.9);padding:40px;border-radius:25px;box-shadow:0 15px 35px rgba(0,0,0,0.1);text-align:center;max-width:600px;position:relative;z-index:10;border:3px solid #ffd54f;}
+.celebrate-box::before{content:'🎊';position:absolute;top:-25px;left:-25px;font-size:45px;animation:spin 3s infinite;}
+.celebrate-box::after{content:'🎉';position:absolute;bottom:-20px;right:-20px;font-size:45px;animation:spin 3s infinite reverse;}
+@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+.celebration-item{position:absolute;font-size:30px;pointer-events:none;animation:celebratePop 4s forwards;opacity:0;z-index:1;}
+@keyframes celebratePop{
+    0%{transform:translateY(0) scale(0);opacity:0;}
+    10%{transform:translateY(-20px) scale(1.2);opacity:1;}
+    30%{transform:translateY(-40px) scale(1);opacity:1;}
+    90%{transform:translateY(-100px) scale(1);opacity:1;}
+    100%{transform:translateY(-120px) scale(0);opacity:0;}
+}
+/* Celebration effects */
+.celebration-firework {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.celebration-sparkle {
+    position: absolute;
+    font-size: 20px;
+    pointer-events: none;
+    animation: sparklePop 2s forwards;
+    z-index: 1;
+}
+
+@keyframes sparklePop {
+    0% {
+        transform: translateY(0) scale(0) rotate(0deg);
+        opacity: 0;
+    }
+    50% {
+        transform: translateY(-100px) scale(1.5) rotate(180deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-200px) scale(0) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.celebration-flower {
+    position: absolute;
+    font-size: 25px;
+    pointer-events: none;
+    animation: flowerFall 4s linear forwards;
+    z-index: 1;
+}
+
+@keyframes flowerFall {
+    0% {
+        transform: translateY(-100px) translateX(0) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) translateX(100px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.celebration-message {
+    position: absolute;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ff6b6b;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    animation: messageFloat 3s ease-in-out forwards;
+    pointer-events: none;
+    z-index: 2;
+}
+
+@keyframes messageFloat {
+    0% {
+        transform: translateY(0) scale(0);
+        opacity: 0;
+    }
+    20% {
+        transform: translateY(-50px) scale(1.2);
+        opacity: 1;
+    }
+    80% {
+        transform: translateY(-150px) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-200px) scale(0);
+        opacity: 0;
+    }
+}
+
+.page-1,.page-2,.page-3,.page-4,.page-5,.page-6,.page-7,.page-8{
+    display: flex;
+    flex-direction: column;
+}
+
+.page-title{
+    font-size:3rem;color:#ff6b6b;text-shadow:0 0 10px #fff,0 0 20px #ff9a9e;animation:fadeInTitle 1s forwards;margin-bottom:20px;position:relative;z-index:10;}
+@keyframes fadeInTitle{0%{opacity:0;transform:translateY(-20px);}100%{opacity:1;transform:translateY(0);
+    font-family:'Pacifico';
+    text-align: center;
+}}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .gallery-container {
+        width: 95%;
+        gap: 15px;
+    }
+    .photo-card {
+        width: calc(50% - 15px);
+    }
+    .page-title {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .photo-card {
+        width: 100%;
+    }
+    .page-title {
+        font-size: 2rem;
+    }
+    .card {
+        width: 280px;
+        height: 350px;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- PAGE 1 -->
+<div class="page page-1" id="page-1">
+    <div class="rose-bg"></div>
+    <h1 class="page-title">Birthday Card❤️</h1>
+    <div class="card">
+        <div class="card-front">
+            <div class="envelope">🎉</div>
+            <h2>Happy Birthday! Bebo</h2>
+            <p>Hover over to open</p>
+        </div>
+        <div class="card-back">
+            <h2>Special Birthday Note</h2>
+            <p>To my dearest Bebo,
+
+Happy birthday, my love! Today is all about celebrating the incredible person you are. You bring so much light, laughter, and love into my life, and I feel like the luckiest person in the world to call you mine.
+ You deserve the world and more.</p>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE 2 - Typing effect -->
+<div class="page page-2 hidden" id="page-2">
+    <div class="rose-bg"></div>
+    <h1 class="page-title">Heartfelt Message 💌</h1>
+    <div class="typing-box" id="typing-box"></div>
+</div>
+
+<!-- PAGE 3 - Points with hearts -->
+<div class="page page-3 hidden" id="page-3">
+    <div class="rose-bg"></div>
+    <h1 class="page-title">Fun Points ✨</h1>
+    <div class="point-box">🎂 "Your Superpowers" - All the amazing things she does</div>
+    <div class="point-box">🎁Our Favorite Conversations - </div>
+    <div class="point-box">"Moments You Made My Heart Skip" - Romantic timeline</div>
+    <div class="point-box">❤️ Spread Love</div>
+</div>
+
+<!-- PAGE 4 - Memories gallery -->
+<div class="page page-4 hidden" id="page-4">
+    <div class="rose-bg"></div>
+    <h1 class="page-title">Our Memories 🖼️</h1>
+    <div class="gallery-container" id="gallery-container">
+        <!-- Gallery items will be inserted here by JavaScript -->
+    </div>
+</div>
+
+<!-- PAGE 5 - Cute Calendar -->
+<div class="page page-5 hidden" id="page-5">
+    <div class="rose-bg"></div>
+    <h1 class="page-title">Special Date 🗓️</h1>
+    <div class="cute-calendar">
+        <div class="calendar-decoration">🌸</div>
+        <div class="calendar-decoration">🎀</div>
+        <div class="calendar-decoration">💝</div>
+        <div class="calendar-decoration">🌺</div>
+        <div class="calendar-header">October 2025</div>
+        <div class="calendar-body">
+            <div class="calendar-day">Sun</div>
+            <div class="calendar-day">Mon</div>
+            <div class="calendar-day">Tue</div>
+            <div class="calendar-day">Wed</div>
+            <div class="calendar-day">Thu</div>
+            <div class="calendar-day">Fri</div>
+            <div class="calendar-day">Sat</div>
+            
+            <div class="calendar-day empty"></div>
+            <div class="calendar-day empty"></div>
+            <div class="calendar-day empty"></div>
+            <div class="calendar-day">1</div>
+            <div class="calendar-day">2</div>
+            <div class="calendar-day">3</div>
+            <div class="calendar-day">4</div>
+            <div class="calendar-day">5</div>
+            <div class="calendar-day">6</div>
+            <div class="calendar-day">7</div>
+            <div class="calendar-day">8</div>
+            <div class="calendar-day">9</div>
+            <div class="calendar-day">10</div>
+            <div class="calendar-day">11</div>
+            <div class="calendar-day">12</div>
+            <div class="calendar-day">13</div>
+            <div class="calendar-day">14</div>
+            <div class="calendar-day">15</div>
+            <div class="calendar-day">16</div>
+            <div class="calendar-day">17</div>
+            <div class="calendar-day">18</div>
+            <div class="calendar-day birthday">19</div>
+            <div class="calendar-day">20</div>
+            <div class="calendar-day">21</div>
+            <div class="calendar-day">22</div>
+            <div class="calendar-day">23</div>
+            <div class="calendar-day">24</div>
+            <div class="calendar-day">25</div>
+            <div class="calendar-day">26</div>
+            <div class="calendar-day">27</div>
+            <div class="calendar-day">28</div>
+            <div class="calendar-day">29</div>
+            <div class="calendar-day">30</div>
+            <div class="calendar-day">31</div>
+        </div>
+        <div class="calendar-footer">🎂 Birthday Day! 🎂</div>
+    </div>
+</div>
+
+<!-- PAGE 6 - Sweet Messages -->
+<div class="page page-6 hidden" id="page-6">
+    <div class="rose-bg"></div>
+    <h1 class="page-title">Sweet Messages 💕</h1>
+    <div class="cute-message-box">
+        My sweet Bebo,
+
+On your birthday, I just want to pour my heart out to you. You are the most beautiful melody in the symphony of my life - every note perfect, every rhythm exactly right. When I'm with you, the world feels softer, colors seem brighter, and time stands still in the most magical way. 💖
+Your laughter is my favorite music, your smile my greatest treasure, and your love the most precious gift I've ever received.😄
+    </div>
+</div>
+
+<!-- PAGE 7 - Cute Moments -->
+<div class="page page-7 hidden" id="page-7">
+    <div class="rose-bg"></div>
+    <h1 class="page-title">Cute Moments 🐾</h1>
+    <div class="cute-moments-box">
+        Remember all the fun times we had together? Keep smiling! 😄<br>
+        Every moment with you is a treasure! 💖
+    </div>
+</div>
+
+<!-- PAGE 8 - Celebrate -->
+<div class="page page-8 hidden" id="page-8">
+    <div class="rose-bg"></div>
+    <h1 class="page-title">Celebrate! 🎊</h1>
+    <div class="celebrate-box">
+       My love bebo!Thank you for being the most beautiful part of my life's story. 💖<br>
+       Thank you for seeing me, understanding me, and loving me exactly as I am.Having you in my life has made me a better person, and loving you has been the easiest and most natural thing I've ever done. I will spend forever thanking my lucky stars for bringing you to me. <br>
+        Let's make this birthday unforgettable! ✨
+        <button id="celebrate-btn" style="margin-top:20px;padding:12px 30px;border-radius:50px;background:linear-gradient(90deg,#ff416c,#ff4b2b);color:#fff;font-weight:600;cursor:pointer;border:none;">Celebrate!</button>
+    </div>
+</div>
+
+<!-- Navigation -->
+<div class="nav-buttons">
+    <button class="nav-button" id="prev-btn">&#8592;</button>
+    <button class="nav-button" id="next-btn">&#8594;</button>
+</div>
+<div class="page-dots">
+    <div class="page-dot active" data-page="1"></div>
+    <div class="page-dot" data-page="2"></div>
+    <div class="page-dot" data-page="3"></div>
+    <div class="page-dot" data-page="4"></div>
+    <div class="page-dot" data-page="5"></div>
+    <div class="page-dot" data-page="6"></div>
+    <div class="page-dot" data-page="7"></div>
+    <div class="page-dot" data-page="8"></div>
+</div>
+
+<script>
+// Navigation
+const pages = document.querySelectorAll('.page');
+let currentPage = 1;
+const totalPages = pages.length;
+
+function goToPage(pageNumber){
+    if(pageNumber<1 || pageNumber>totalPages) return;
+    pages.forEach(p=>p.classList.add('hidden'));
+    pages[pageNumber-1].classList.remove('hidden');
+    document.querySelectorAll('.page-dot').forEach(d=>d.classList.remove('active'));
+    document.querySelector(`.page-dot[data-page="${pageNumber}"]`).classList.add('active');
+    currentPage = pageNumber;
+    if(pageNumber===2) startTyping();
+    if(pageNumber===4) initializeGallery();
+}
+document.getElementById('next-btn').addEventListener('click',()=>goToPage(currentPage+1));
+document.getElementById('prev-btn').addEventListener('click',()=>goToPage(currentPage-1));
+document.querySelectorAll('.page-dot').forEach(dot=>{
+    dot.addEventListener('click',()=>goToPage(parseInt(dot.dataset.page)));
+});
+
+// Typing effect Page 2
+const message = "Happy birthday to my beautiful Bebo! You light up my world with your smile and fill my days with joy. Every moment with you is special, and I'm so grateful to have you in my life. May your day be as amazing and wonderful as you are. Love you always! 💖🎂";
+let typingIndex = 0;
+const typingBox = document.getElementById('typing-box');
+
+function startTyping(){
+    typingBox.textContent = '';
+    typingIndex = 0;
+    const typingInterval = setInterval(()=>{
+        if(typingIndex<message.length){
+            typingBox.textContent+=message[typingIndex];
+            typingIndex++;
+        }else{
+            clearInterval(typingInterval);
+        }
+    },50);
+}
+
+// Floating hearts Page 3
+function createHeart(){
+    const heart = document.createElement('div');
+    heart.className='floating-heart';
+    heart.textContent='❤️';
+    heart.style.left=Math.random()*90+'%';
+    document.getElementById('page-3').appendChild(heart);
+    setTimeout(()=>heart.remove(),4000);
+}
+setInterval(createHeart,500);
+
+// Gallery initialization
+function initializeGallery() {
+    const galleryContainer = document.getElementById('gallery-container');
+    galleryContainer.innerHTML = '';
+    
+    // Your original photo and video links
+    const mediaItems = [
+        { type: 'image', src: '/photos/WhatsApp Image 2025-10-10 at 07.40.35 (1).jpeg', caption: 'Our Little World' },
+        { type: 'image', src: '/photos/WhatsApp Image 2025-10-10 at 07.40.35 (2).jpeg', caption: 'Together Forever' },
+        { type: 'image', src: '/photos/WhatsApp Image 2025-10-10 at 07.40.35.jpeg', caption: 'My Bebo' },
+        { type: 'image', src: '/photos/WhatsApp Image 2025-10-10 at 07.40.36 (1).jpeg', caption: 'Just Us Two' },
+        { type: 'image', src: '/photos/WhatsApp Image 2025-10-10 at 07.40.36.jpeg', caption: 'Heart to Heart' },
+        { type: 'image', src: '/photos/WhatsApp Image 2025-10-10 at 07.40.37 (1).jpeg', caption: 'You & Me' },
+        { type: 'image', src: '/photos/WhatsApp Image 2025-10-10 at 07.40.37.jpeg', caption: 'Soul Connection' },
+        { type: 'image', src: '/photos/WhatsApp Image 2025-10-10 at 07.40.38 (1).jpeg', caption: 'Sweetheart' },
+        { type: 'image', src: '/photos/WhatsApp Image 2025-10-10 at 07.40.38.jpeg', caption: 'Making Memories' },
+        { type: 'image', src: '/photos/WhatsApp Image 2025-10-10 at 07.40.39.jpeg', caption: 'Our Story' },
+        { type: 'image', src: '/photos/WhatsApp Image 2025-10-10 at 07.40.40 (1).jpeg', caption: 'Comfort Zone' },
+        { type: 'image', src: '/photos/WhatsApp Image 2025-10-10 at 07.40.40.jpeg', caption: 'Cozy Moments' },
+        { type: 'image', src: '/photos/WhatsApp Image 2025-10-10 at 07.40.41 (1).jpeg', caption: 'Home Is You' },
+        { type: 'image', src: '/photos/WhatsApp Image 2025-10-10 at 07.40.41 (2).jpeg', caption: 'Smile Sessions' },
+        { type: 'image', src: '/photos/WhatsApp Image 2025-10-10 at 07.40.41.jpeg', caption: 'Bebo' },
+        { type: 'image', src: '/photos/WhatsApp Image 2025-10-10 at 07.40.42.jpeg', caption: 'My sweetheart' },
+        { type: 'image', src: '/photos/WhatsApp Image 2025-10-10 at 07.40.43.jpeg', caption: 'My Person' },
+        { type: 'image', src: '/photos/WhatsApp Image 2025-10-10 at 18.17.19.jpeg', caption: 'Best Part' },
+        { type: 'video', src: '/photos/WhatsApp Video 2025-10-10 at 07.40.43.mp4', caption: 'My love bebo' },
+        { type: 'video', src: '/photos/WhatsApp Video 2025-10-10 at 07.40.44 (1).mp4', caption: 'My love' },
+        { type: 'video', src: '/photos/WhatsApp Video 2025-10-10 at 07.40.44.mp4', caption: 'Darling' }
+    ];
+    
+    mediaItems.forEach((item, index) => {
+        const photoCard = document.createElement('div');
+        photoCard.className = 'photo-card';
+        photoCard.dataset.index = index;
+        
+        if (item.type === 'image') {
+            const img = document.createElement('img');
+            img.src = item.src;
+            img.alt = item.caption;
+            photoCard.appendChild(img);
+        } else {
+            const video = document.createElement('video');
+            video.muted = true;
+            video.loop = true;
+            video.playsInline = true;
+            const source = document.createElement('source');
+            source.src = item.src;
+            source.type = 'video/mp4';
+            video.appendChild(source);
+            photoCard.appendChild(video);
+        }
+        
+        const caption = document.createElement('div');
+        caption.className = 'photo-card-caption';
+        caption.textContent = item.caption;
+        photoCard.appendChild(caption);
+        
+        galleryContainer.appendChild(photoCard);
+    });
+    
+    // Add click event to expand media
+    document.querySelectorAll('.photo-card').forEach(card => {
+        card.addEventListener('click', function() {
+            const index = this.dataset.index;
+            const item = mediaItems[index];
+            
+            // Create expanded media element
+            const expandedMedia = document.createElement('div');
+            expandedMedia.className = 'media-expanded';
+            expandedMedia.dataset.index = index;
+            
+            // Close button
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'close-expanded';
+            closeBtn.innerHTML = '×';
+            closeBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                expandedMedia.remove();
+            });
+            expandedMedia.appendChild(closeBtn);
+            
+            // Media content
+            if (item.type === 'image') {
+                const img = document.createElement('img');
+                img.src = item.src;
+                img.alt = item.caption;
+                expandedMedia.appendChild(img);
+            } else {
+                const video = document.createElement('video');
+                video.controls = true;
+                video.autoplay = true;
+                video.muted = true;
+                const source = document.createElement('source');
+                source.src = item.src;
+                source.type = 'video/mp4';
+                video.appendChild(source);
+                expandedMedia.appendChild(video);
+            }
+            
+            // Caption
+            const caption = document.createElement('div');
+            caption.className = 'media-expanded-caption';
+            caption.textContent = item.caption;
+            expandedMedia.appendChild(caption);
+            
+            // Insert after the clicked card
+            this.parentNode.insertBefore(expandedMedia, this.nextSibling);
+            
+            // Scroll to the expanded media
+            expandedMedia.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+    });
+}
+
+// Celebration effects
+function createFirework(x, y) {
+    const firework = document.createElement('div');
+    firework.className = 'celebration-firework';
+    firework.style.left = x + 'px';
+    firework.style.top = y + 'px';
+    firework.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+    
+    document.getElementById('page-8').appendChild(firework);
+    
+    // Animate firework
+    firework.animate([
+        { transform: 'scale(0)', opacity: 1 },
+        { transform: 'scale(20)', opacity: 0 }
+    ], {
+        duration: 1000,
+        easing: 'ease-out'
+    });
+    
+    setTimeout(() => {
+        if (firework.parentNode) firework.remove();
+    }, 1000);
+}
+
+function createSparkle() {
+    const sparkle = document.createElement('div');
+    sparkle.className = 'celebration-sparkle';
+    sparkle.textContent = '✨';
+    sparkle.style.left = Math.random() * 90 + '%';
+    sparkle.style.top = Math.random() * 90 + '%';
+    
+    document.getElementById('page-8').appendChild(sparkle);
+    
+    setTimeout(() => {
+        if (sparkle.parentNode) sparkle.remove();
+    }, 2000);
+}
+
+function createFlower() {
+    const flower = document.createElement('div');
+    flower.className = 'celebration-flower';
+    const flowers = ['🌸', '🌺', '🌷', '🌹', '💐', '🌼', '🌻'];
+    flower.textContent = flowers[Math.floor(Math.random() * flowers.length)];
+    flower.style.left = Math.random() * 90 + '%';
+    flower.style.fontSize = (Math.random() * 20 + 15) + 'px';
+    
+    document.getElementById('page-8').appendChild(flower);
+    
+    setTimeout(() => {
+        if (flower.parentNode) flower.remove();
+    }, 4000);
+}
+
+function createCelebrationMessage() {
+    const messages = [
+        'Happy Birthday! 🎂',
+        'You\'re Amazing! 💖',
+        'Best Day Ever! 🌟',
+        'So Special! ✨',
+        'Love You! 💕',
+        'Enjoy! 🥳'
+    ];
+    
+    const message = document.createElement('div');
+    message.className = 'celebration-message';
+    message.textContent = messages[Math.floor(Math.random() * messages.length)];
+    message.style.left = Math.random() * 70 + '%';
+    message.style.top = Math.random() * 70 + '%';
+    
+    document.getElementById('page-8').appendChild(message);
+    
+    setTimeout(() => {
+        if (message.parentNode) message.remove();
+    }, 3000);
+}
+
+// Enhanced celebration function
+document.getElementById('celebrate-btn').addEventListener('click', () => {
+    const page8 = document.getElementById('page-8');
+    
+    // Create multiple types of effects
+    for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+            // Fireworks
+            createFirework(
+                Math.random() * window.innerWidth,
+                Math.random() * window.innerHeight
+            );
+        }, i * 100);
+    }
+    
+    for (let i = 0; i < 30; i++) {
+        setTimeout(() => {
+            // Sparkles
+            createSparkle();
+        }, i * 150);
+    }
+    
+    for (let i = 0; i < 20; i++) {
+        setTimeout(() => {
+            // Flowers
+            createFlower();
+        }, i * 200);
+    }
+    
+    for (let i = 0; i < 10; i++) {
+        setTimeout(() => {
+            // Messages
+            createCelebrationMessage();
+        }, i * 500);
+    }
+    
+    // Add background color animation
+    page8.animate([
+        { background: 'linear-gradient(135deg,#fff9c4,#fff59d,#fff176)' },
+        { background: 'linear-gradient(135deg,#ff9a9e,#fad0c4,#fad0c4)' },
+        { background: 'linear-gradient(135deg,#a1c4fd,#c2e9fb,#c2e9fb)' },
+        { background: 'linear-gradient(135deg,#fff9c4,#fff59d,#fff176)' }
+    ], {
+        duration: 4000,
+        iterations: 2
+    });
+});
+
+// Initialize gallery when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    if (currentPage === 4) {
+        initializeGallery();
+    }
+});
+ 
+
+
+</script>
+</body>
+</html>
