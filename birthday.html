@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Virtual Birthday Cake</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎂</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600;700&display=swap');
@@ -174,6 +175,8 @@
             box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
             font-family: 'Poppins', sans-serif;
             margin-top: 1rem;
+            display: inline-block;
+            text-decoration: none;
         }
         
         .make-wish-btn:hover {
@@ -233,6 +236,12 @@
     </style>
 </head>
 <body>
+
+    <!-- Hidden audio element that will autoplay -->
+    <audio id="birthdayAudio" loop autoplay>
+        <source src="https://assets.mixkit.co/music/preview/mixkit-happy-birthday-to-you-443.mp3" type="audio/mpeg">
+    </audio>
+    
     <div class="cake-container">
         <h1 class="page-title">Virtual Birthday Cake</h1>
         
@@ -254,26 +263,52 @@
             <div class="decoration decoration-4"></div>
         </div>
         
-        <button class="make-wish-btn" id="wish-btn"> <a href="suprise.html">Click for the surprise my bebo💗</a></button>
+        <a href="suprise.html" class="make-wish-btn" id="wish-btn">Click for the surprise my bebo💗</a>
         
+        <div class="wish-message" id="wish-message">
+            Your wish has been made! May all your dreams come true! 🎉
+        </div>
     </div>
 
     <script>
-        document.getElementById('wish-btn').addEventListener('click', function() {
-            const flame = document.querySelector('.flame');
-            const wishMessage = document.getElementById('wish-message');
-            const button = document.getElementById('wish-btn');
+        // Audio handling - attempt to autoplay with user interaction
+        const audio = document.getElementById('birthdayAudio');
+        
+        // Try to play audio immediately
+        audio.play().catch(error => {
+            console.log('Autoplay prevented, waiting for user interaction');
             
-            // Blow out the candle
-            flame.style.animation = 'none';
-            flame.style.opacity = '0';
-    
+            // If autoplay is blocked, play on first user interaction
+            const playAudioOnInteraction = () => {
+                audio.play();
+                document.removeEventListener('click', playAudioOnInteraction);
+                document.removeEventListener('keydown', playAudioOnInteraction);
+            };
             
-            // Create floating hearts
-            createHearts();
-            
-            // Add celebration effect
-            celebrate();
+            document.addEventListener('click', playAudioOnInteraction);
+            document.addEventListener('keydown', playAudioOnInteraction);
+        });
+        
+        // Wish button functionality
+        document.getElementById('wish-btn').addEventListener('click', function(e) {
+            // Only run the animation if not navigating away
+            if (e.target.getAttribute('href')) {
+                const flame = document.querySelector('.flame');
+                const wishMessage = document.getElementById('wish-message');
+                
+                // Blow out the candle
+                flame.style.animation = 'none';
+                flame.style.opacity = '0';
+                
+                // Show wish message
+                wishMessage.style.display = 'block';
+                
+                // Create floating hearts
+                createHearts();
+                
+                // Add celebration effect
+                celebrate();
+            }
         });
         
         function createHearts() {
