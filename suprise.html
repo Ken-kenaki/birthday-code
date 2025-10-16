@@ -203,7 +203,7 @@
         z-index: 0;
       }
 
-      /* PAGE 1 - Birthday Card - FIXED FOR iOS */
+      /* PAGE 1 - Birthday Card - FIXED */
       .page-1 {
         background: linear-gradient(135deg, #f9c1c1, #ffd9d9, #ffeaea);
         display: flex;
@@ -224,14 +224,11 @@
         position: relative;
         transform-style: preserve-3d;
         -webkit-transform-style: preserve-3d;
-        transition: transform 0.8s;
-        -webkit-transition: transform 0.8s;
-        z-index: 10;
+        transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+        -webkit-transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
         cursor: pointer;
-        touch-action: manipulation;
-        -webkit-tap-highlight-color: transparent;
-        -webkit-user-select: none;
-        -webkit-touch-callout: none;
+        transform: translate3d(0, 0, 0);
+        -webkit-transform: translate3d(0, 0, 0);
       }
 
       .card.flipped {
@@ -252,6 +249,7 @@
         justify-content: center;
         border-radius: 20px;
         padding: 20px;
+        text-align: center;
       }
 
       .card-front {
@@ -428,7 +426,7 @@
         transform: scale(1.05);
       }
 
-      /* Expanded media styles - FIXED */
+      /* Expanded media styles */
       .media-expanded-overlay {
         position: fixed;
         top: 0;
@@ -1213,7 +1211,7 @@
     <div class="page page-1" id="page-1">
       <div class="rose-bg"></div>
       <h1 class="page-title">Birthday Card❤️</h1>
-      <!-- FIXED CARD STRUCTURE FOR iOS -->
+      <!-- FIXED CARD STRUCTURE -->
       <div class="card-container">
         <div class="card" id="birthday-card">
           <div class="card-front">
@@ -1413,7 +1411,6 @@
       document.getElementById('music-yes').addEventListener('click', function() {
         document.getElementById('music-popup').style.display = 'none';
         musicEnabled = true;
-        // Initialize music but don't play yet
         backgroundMusic.volume = 0.7;
         console.log("Music enabled - ready to play on user interaction");
       });
@@ -1424,12 +1421,16 @@
         console.log("Music disabled");
       });
 
-      // FIXED CARD FLIP FOR iOS - SIMPLE AND GUARANTEED TO WORK
+      // **FIXED CARD FLIP - UNIVERSAL COMPATIBILITY**
       const birthdayCard = document.getElementById("birthday-card");
-      
-      function handleCardFlip() {
-        console.log("Card flip triggered - iOS compatible");
-        birthdayCard.classList.toggle("flipped");
+      let cardFlipped = false;
+
+      function flipCard() {
+        console.log("Card flip triggered");
+        
+        // Toggle flip state
+        cardFlipped = !cardFlipped;
+        birthdayCard.classList.toggle("flipped", cardFlipped);
         
         // If music is enabled, start playing on first interaction
         if (musicEnabled && !musicPlaying) {
@@ -1444,9 +1445,21 @@
         }
       }
 
-      // SIMPLE EVENT LISTENERS THAT WORK ON iOS
-      birthdayCard.addEventListener("click", handleCardFlip);
-      birthdayCard.addEventListener("touchend", handleCardFlip);
+      // **UNIVERSAL EVENT HANDLING - WORKS ON ALL DEVICES**
+      
+      // Click event (for mouse and touch devices that convert touch to click)
+      birthdayCard.addEventListener("click", flipCard);
+      
+      // Touch events (for mobile devices)
+      birthdayCard.addEventListener("touchstart", function(e) {
+        // Prevent default to avoid double-tap zoom and other browser behaviors
+        e.preventDefault();
+      }, { passive: false });
+      
+      birthdayCard.addEventListener("touchend", function(e) {
+        e.preventDefault();
+        flipCard();
+      }, { passive: false });
 
       // Navigation
       const pages = document.querySelectorAll(".page");
@@ -1662,7 +1675,7 @@
           galleryContainer.appendChild(photoCard);
         });
 
-        // Add click event to expand media - FIXED
+        // Add click event to expand media
         document.querySelectorAll(".photo-card").forEach((card) => {
           card.addEventListener("click", function () {
             const index = this.dataset.index;
