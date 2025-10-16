@@ -35,6 +35,7 @@
         align-items: center;
         justify-content: center;
         transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
+        transform-style: preserve-3d;
         overflow-y: auto;
         padding: 20px;
       }
@@ -103,6 +104,10 @@
         color: #555;
       }
 
+      .music-popup-btn:hover {
+        transform: scale(1.05);
+      }
+
       /* RESPONSIVE PAGINATION */
       .pagination-container {
         position: fixed;
@@ -147,75 +152,9 @@
         box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
       }
 
-      /* GUARANTEED CARD FLIP FOR iOS */
-      .card-container {
-        width: min(320px, 90vw);
-        height: min(400px, 80vh);
-        perspective: 1000px;
-        -webkit-perspective: 1000px;
-      }
-
-      .card {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        transform-style: preserve-3d;
-        -webkit-transform-style: preserve-3d;
-        transition: transform 0.8s ease;
-        -webkit-transition: transform 0.8s ease;
-        cursor: pointer;
-      }
-
-      .card.flipped {
-        transform: rotateY(180deg);
-        -webkit-transform: rotateY(180deg);
-      }
-
-      .card-front,
-      .card-back {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        backface-visibility: hidden;
-        -webkit-backface-visibility: hidden;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        border-radius: 20px;
-        padding: 20px;
-        text-align: center;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      }
-
-      .card-front {
-        background: white;
-        z-index: 2;
-      }
-
-      .card-back {
-        background: linear-gradient(135deg, #f9a1c1, #f58fc3);
-        color: white;
-        transform: rotateY(180deg);
-        -webkit-transform: rotateY(180deg);
-      }
-
-      .envelope {
-        font-size: clamp(50px, 15vw, 70px);
-        margin-bottom: 15px;
-        animation: pulse 2s infinite;
-      }
-
-      @keyframes pulse {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.1);
-        }
-        100% {
-          transform: scale(1);
-        }
+      .pagination-dot:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
       }
 
       /* Rose background pattern */
@@ -264,12 +203,86 @@
         z-index: 0;
       }
 
-      /* PAGE 1 - Birthday Card */
+      /* PAGE 1 - Birthday Card - FIXED FOR iOS */
       .page-1 {
         background: linear-gradient(135deg, #f9c1c1, #ffd9d9, #ffeaea);
         display: flex;
         align-items: center;
         justify-content: center;
+      }
+
+      .card-container {
+        perspective: 1000px;
+        -webkit-perspective: 1000px;
+        width: min(320px, 90vw);
+        height: min(400px, 80vh);
+      }
+
+      .card {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        -webkit-transform-style: preserve-3d;
+        transition: transform 0.8s;
+        -webkit-transition: transform 0.8s;
+        z-index: 10;
+        cursor: pointer;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+      }
+
+      .card.flipped {
+        transform: rotateY(180deg);
+        -webkit-transform: rotateY(180deg);
+      }
+
+      .card-front,
+      .card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        padding: 20px;
+      }
+
+      .card-front {
+        background: white;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      .card-back {
+        transform: rotateY(180deg);
+        -webkit-transform: rotateY(180deg);
+        background: linear-gradient(135deg, #f9a1c1, #f58fc3);
+        color: white;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      .envelope {
+        font-size: clamp(50px, 15vw, 70px);
+        margin-bottom: 15px;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
       }
 
       /* PAGE 2 - Typing Message */
@@ -411,7 +424,11 @@
         color: #ff6b6b;
       }
 
-      /* Expanded media styles */
+      .photo-card:hover {
+        transform: scale(1.05);
+      }
+
+      /* Expanded media styles - FIXED */
       .media-expanded-overlay {
         position: fixed;
         top: 0;
@@ -541,7 +558,37 @@
         font-size: clamp(1rem, 4vw, 1.2rem);
       }
 
-      /* PAGE 6 - Sweet Messages */
+      .calendar-decoration {
+        position: absolute;
+        font-size: clamp(20px, 8vw, 30px);
+        z-index: 1;
+      }
+
+      .calendar-decoration:nth-child(1) {
+        top: -15px;
+        left: -15px;
+        animation: bounce 2s infinite;
+      }
+
+      .calendar-decoration:nth-child(2) {
+        bottom: -15px;
+        right: -15px;
+        animation: bounce 2s infinite reverse;
+      }
+
+      .calendar-decoration:nth-child(3) {
+        top: -15px;
+        right: -15px;
+        animation: spin 3s infinite;
+      }
+
+      .calendar-decoration:nth-child(4) {
+        bottom: -15px;
+        left: -15px;
+        animation: spin 3s infinite reverse;
+      }
+
+      /* PAGE 6 - Sweet Messages with cute effects */
       .page-6 {
         background: linear-gradient(135deg, #f9c1e8, #ffd9f2, #ffeaf7);
       }
@@ -561,7 +608,72 @@
         line-height: 1.7;
       }
 
-      /* PAGE 7 - Cute Moments */
+      .cute-message-box::before {
+        content: "💕";
+        position: absolute;
+        top: -20px;
+        left: -20px;
+        font-size: clamp(30px, 10vw, 40px);
+        animation: wiggle 2s infinite;
+      }
+
+      .cute-message-box::after {
+        content: "✨";
+        position: absolute;
+        bottom: -15px;
+        right: -15px;
+        font-size: clamp(20px, 8vw, 30px);
+        animation: sparkle 3s infinite;
+      }
+
+      @keyframes wiggle {
+        0%,
+        100% {
+          transform: rotate(-10deg);
+        }
+        50% {
+          transform: rotate(10deg);
+        }
+      }
+
+      @keyframes sparkle {
+        0%,
+        100% {
+          opacity: 0.7;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1.3);
+        }
+      }
+
+      .bouncing-heart {
+        position: absolute;
+        font-size: clamp(18px, 6vw, 25px);
+        animation: bounceHeart 5s infinite;
+        opacity: 0;
+        z-index: 1;
+      }
+
+      @keyframes bounceHeart {
+        0% {
+          transform: translateY(0) translateX(0) rotate(0deg);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-100vh) translateX(50px) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      /* PAGE 7 - Cute Moments with floating elements */
       .page-7 {
         background: linear-gradient(135deg, #c1e3f9, #d9edff, #eaf5ff);
       }
@@ -581,7 +693,52 @@
         line-height: 1.7;
       }
 
-      /* PAGE 8 - Celebrate */
+      .cute-moments-box::before {
+        content: "🐾";
+        position: absolute;
+        top: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: clamp(30px, 10vw, 40px);
+        animation: jump 2s infinite;
+      }
+
+      @keyframes jump {
+        0%,
+        100% {
+          transform: translateX(-50%) translateY(0);
+        }
+        50% {
+          transform: translateX(-50%) translateY(-10px);
+        }
+      }
+
+      .floating-emoji {
+        position: absolute;
+        font-size: clamp(20px, 8vw, 30px);
+        animation: floatEmoji 6s infinite;
+        opacity: 0;
+        z-index: 1;
+      }
+
+      @keyframes floatEmoji {
+        0% {
+          transform: translateY(0) translateX(0) rotate(0deg);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-100vh) translateX(100px) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      /* PAGE 8 - Celebrate with enhanced effects */
       .page-8 {
         background: linear-gradient(135deg, #fff9c4, #fff59d, #fff176);
       }
@@ -605,6 +762,165 @@
       .celebrate-box.closing {
         transform: scale(0);
         opacity: 0;
+      }
+
+      .celebrate-box::before {
+        content: "🎊";
+        position: absolute;
+        top: -25px;
+        left: -25px;
+        font-size: clamp(30px, 10vw, 45px);
+        animation: spin 3s infinite;
+      }
+
+      .celebrate-box::after {
+        content: "🎉";
+        position: absolute;
+        bottom: -20px;
+        right: -20px;
+        font-size: clamp(30px, 10vw, 45px);
+        animation: spin 3s infinite reverse;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .celebration-item {
+        position: absolute;
+        font-size: clamp(20px, 8vw, 30px);
+        pointer-events: none;
+        animation: celebratePop 4s forwards;
+        opacity: 0;
+        z-index: 1;
+      }
+
+      @keyframes celebratePop {
+        0% {
+          transform: translateY(0) scale(0);
+          opacity: 0;
+        }
+        10% {
+          transform: translateY(-20px) scale(1.2);
+          opacity: 1;
+        }
+        30% {
+          transform: translateY(-40px) scale(1);
+          opacity: 1;
+        }
+        90% {
+          transform: translateY(-100px) scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-120px) scale(0);
+          opacity: 0;
+        }
+      }
+
+      /* Celebration effects */
+      .celebration-firework {
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .celebration-sparkle {
+        position: absolute;
+        font-size: clamp(16px, 5vw, 20px);
+        pointer-events: none;
+        animation: sparklePop 2s forwards;
+        z-index: 1;
+      }
+
+      @keyframes sparklePop {
+        0% {
+          transform: translateY(0) scale(0) rotate(0deg);
+          opacity: 0;
+        }
+        50% {
+          transform: translateY(-100px) scale(1.5) rotate(180deg);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-200px) scale(0) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      .celebration-flower {
+        position: absolute;
+        font-size: clamp(18px, 6vw, 25px);
+        pointer-events: none;
+        animation: flowerFall 4s linear forwards;
+        z-index: 1;
+      }
+
+      @keyframes flowerFall {
+        0% {
+          transform: translateY(-100px) translateX(0) rotate(0deg);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(100vh) translateX(100px) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      .celebration-message {
+        position: absolute;
+        font-size: clamp(1.5rem, 6vw, 2rem);
+        font-weight: bold;
+        color: #ff6b6b;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        animation: messageFloat 3s ease-in-out forwards;
+        pointer-events: none;
+        z-index: 2;
+      }
+
+      @keyframes messageFloat {
+        0% {
+          transform: translateY(0) scale(0);
+          opacity: 0;
+        }
+        20% {
+          transform: translateY(-50px) scale(1.2);
+          opacity: 1;
+        }
+        80% {
+          transform: translateY(-150px) scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-200px) scale(0);
+          opacity: 0;
+        }
+      }
+
+      .page-1,
+      .page-2,
+      .page-3,
+      .page-4,
+      .page-5,
+      .page-6,
+      .page-7,
+      .page-8 {
+        display: flex;
+        flex-direction: column;
       }
 
       .page-title {
@@ -633,15 +949,173 @@
       }
 
       /* iOS-specific fixes */
-      @media (max-width: 768px) {
-        .card-container {
-          perspective: 800px;
-          -webkit-perspective: 800px;
+      .page {
+        -webkit-transform-style: preserve-3d;
+        -webkit-backface-visibility: hidden;
+      }
+
+      .card-front, .card-back {
+        -webkit-backface-visibility: hidden;
+      }
+
+      /* Responsive design */
+      @media (max-width: 1200px) {
+        .pagination-dot {
+          width: 40px;
+          height: 40px;
+          font-size: 15px;
         }
-        
-        .card {
-          transition: transform 0.6s ease;
-          -webkit-transition: transform 0.6s ease;
+      }
+
+      @media (max-width: 992px) {
+        .pagination-dot {
+          width: 38px;
+          height: 38px;
+          font-size: 14px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .gallery-container {
+          grid-template-columns: repeat(2, 1fr);
+          width: 95%;
+          gap: 15px;
+        }
+
+        .page-title {
+          font-size: clamp(1.8rem, 8vw, 2.5rem);
+        }
+
+        .pagination-container {
+          padding: 12px 8px;
+          gap: 6px;
+        }
+
+        .pagination-dot {
+          width: 36px;
+          height: 36px;
+          font-size: 14px;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .pagination-container {
+          gap: 5px;
+          padding: 10px 5px;
+        }
+
+        .pagination-dot {
+          width: 34px;
+          height: 34px;
+          font-size: 13px;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .pagination-container {
+          gap: 4px;
+        }
+
+        .pagination-dot {
+          width: 32px;
+          height: 32px;
+          font-size: 12px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .gallery-container {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .page-title {
+          font-size: clamp(1.5rem, 7vw, 2rem);
+        }
+
+        .card-container {
+          width: min(280px, 90vw);
+          height: min(350px, 70vh);
+        }
+
+        .typing-box,
+        .cute-message-box,
+        .cute-moments-box,
+        .celebrate-box {
+          padding: 25px;
+        }
+
+        .point-box {
+          padding: 12px 15px;
+        }
+
+        .calendar-body {
+          gap: 5px;
+        }
+
+        .calendar-day {
+          padding: 5px;
+        }
+
+        .pagination-container {
+          gap: 3px;
+          padding: 8px 3px;
+        }
+
+        .pagination-dot {
+          width: 30px;
+          height: 30px;
+          font-size: 11px;
+          min-width: 30px;
+        }
+      }
+
+      @media (max-width: 400px) {
+        .pagination-container {
+          gap: 2px;
+        }
+
+        .pagination-dot {
+          width: 28px;
+          height: 28px;
+          font-size: 10px;
+          min-width: 28px;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .page {
+          padding: 10px;
+        }
+
+        .card-container {
+          padding: 15px;
+        }
+
+        .typing-box,
+        .cute-message-box,
+        .cute-moments-box,
+        .celebrate-box {
+          padding: 20px;
+        }
+
+        .pagination-container {
+          gap: 1px;
+        }
+
+        .pagination-dot {
+          width: 26px;
+          height: 26px;
+          font-size: 9px;
+          min-width: 26px;
+        }
+      }
+
+      @media (max-width: 320px) {
+        .pagination-dot {
+          width: 24px;
+          height: 24px;
+          font-size: 8px;
+          min-width: 24px;
         }
       }
 
@@ -657,6 +1131,58 @@
 
         .pagination-dot:hover {
           transform: none;
+        }
+      }
+
+      /* Compact pagination for very small screens */
+      .pagination-compact {
+        display: none;
+      }
+
+      @media (max-width: 280px) {
+        .pagination-container:not(.compact) {
+          display: none;
+        }
+        
+        .pagination-compact {
+          display: flex;
+          position: fixed;
+          bottom: 10px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: rgba(255, 255, 255, 0.95);
+          border-radius: 25px;
+          padding: 8px 15px;
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+          z-index: 100;
+        }
+        
+        .compact-nav {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+        }
+        
+        .nav-btn {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: #ff6b6b;
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: none;
+          cursor: pointer;
+          font-weight: bold;
+          box-shadow: 0 3px 10px rgba(255, 107, 107, 0.3);
+        }
+        
+        .page-indicator {
+          font-weight: 600;
+          color: #ff6b6b;
+          min-width: 60px;
+          text-align: center;
         }
       }
     </style>
@@ -676,7 +1202,10 @@
 
     <!-- Background Music -->
     <audio id="background-music" preload="metadata" playsinline webkit-playsinline loop>
-      <source src="photos/birthday.mp3" type="audio/mpeg" />
+      <source
+        src="photos/birthday.mp3"
+        type="audio/mpeg"
+      />
       Your browser does not support the audio element.
     </audio>
 
@@ -684,8 +1213,7 @@
     <div class="page page-1" id="page-1">
       <div class="rose-bg"></div>
       <h1 class="page-title">Birthday Card❤️</h1>
-      
-      <!-- GUARANTEED WORKING CARD STRUCTURE -->
+      <!-- FIXED CARD STRUCTURE FOR iOS -->
       <div class="card-container">
         <div class="card" id="birthday-card">
           <div class="card-front">
@@ -741,6 +1269,10 @@
       <div class="rose-bg"></div>
       <h1 class="page-title">Special Date 🗓️</h1>
       <div class="cute-calendar">
+        <div class="calendar-decoration">🌸</div>
+        <div class="calendar-decoration">🎀</div>
+        <div class="calendar-decoration">💝</div>
+        <div class="calendar-decoration">🌺</div>
         <div class="calendar-header">October 2025</div>
         <div class="calendar-body">
           <div class="calendar-day">Sun</div>
@@ -857,6 +1389,15 @@
       <div class="pagination-dot" data-page="8">8</div>
     </div>
 
+    <!-- Compact pagination for very small screens -->
+    <div class="pagination-compact">
+      <div class="compact-nav">
+        <button class="nav-btn" id="prev-btn">←</button>
+        <div class="page-indicator" id="page-indicator">Page 1 of 8</div>
+        <button class="nav-btn" id="next-btn">→</button>
+      </div>
+    </div>
+
     <script>
       // Show music popup on page load
       document.addEventListener('DOMContentLoaded', function() {
@@ -872,41 +1413,40 @@
       document.getElementById('music-yes').addEventListener('click', function() {
         document.getElementById('music-popup').style.display = 'none';
         musicEnabled = true;
+        // Initialize music but don't play yet
         backgroundMusic.volume = 0.7;
+        console.log("Music enabled - ready to play on user interaction");
       });
 
       document.getElementById('music-no').addEventListener('click', function() {
         document.getElementById('music-popup').style.display = 'none';
         musicEnabled = false;
+        console.log("Music disabled");
       });
 
-      // GUARANTEED CARD FLIP - iOS COMPATIBLE
+      // FIXED CARD FLIP FOR iOS - SIMPLE AND GUARANTEED TO WORK
       const birthdayCard = document.getElementById("birthday-card");
       
-      function flipCard() {
-        console.log("Card flip triggered - working!");
+      function handleCardFlip() {
+        console.log("Card flip triggered - iOS compatible");
         birthdayCard.classList.toggle("flipped");
         
-        // Start music on first flip if enabled
+        // If music is enabled, start playing on first interaction
         if (musicEnabled && !musicPlaying) {
           backgroundMusic.play()
             .then(() => {
               musicPlaying = true;
+              console.log("Music started on card flip");
             })
             .catch(error => {
-              console.log("Music play failed:", error);
+              console.log("Failed to play music:", error);
             });
         }
       }
 
-      // SIMPLE EVENT HANDLERS THAT WORK ON iOS
-      birthdayCard.addEventListener("click", flipCard);
-      
-      // Touch events for mobile
-      birthdayCard.addEventListener("touchend", function(e) {
-        e.preventDefault();
-        flipCard();
-      });
+      // SIMPLE EVENT LISTENERS THAT WORK ON iOS
+      birthdayCard.addEventListener("click", handleCardFlip);
+      birthdayCard.addEventListener("touchend", handleCardFlip);
 
       // Navigation
       const pages = document.querySelectorAll(".page");
@@ -917,9 +1457,16 @@
         if (pageNumber < 1 || pageNumber > totalPages) return;
         pages.forEach((p) => p.classList.add("hidden"));
         pages[pageNumber - 1].classList.remove("hidden");
-        document.querySelectorAll(".pagination-dot").forEach((d) => d.classList.remove("active"));
-        document.querySelector(`.pagination-dot[data-page="${pageNumber}"]`).classList.add("active");
+        document
+          .querySelectorAll(".pagination-dot")
+          .forEach((d) => d.classList.remove("active"));
+        document
+          .querySelector(`.pagination-dot[data-page="${pageNumber}"]`)
+          .classList.add("active");
         currentPage = pageNumber;
+        
+        // Update compact navigation
+        document.getElementById('page-indicator').textContent = `Page ${pageNumber} of ${totalPages}`;
         
         if (pageNumber === 2) startTyping();
         if (pageNumber === 4) initializeGallery();
@@ -927,16 +1474,33 @@
 
       // Regular pagination dots
       document.querySelectorAll(".pagination-dot").forEach((dot) => {
-        dot.addEventListener("click", () => goToPage(parseInt(dot.dataset.page)));
+        dot.addEventListener("click", () =>
+          goToPage(parseInt(dot.dataset.page))
+        );
+        dot.addEventListener("touchstart", function(e) {
+          e.preventDefault();
+          goToPage(parseInt(dot.dataset.page));
+        }, { passive: false });
+      });
+
+      // Compact navigation
+      document.getElementById('prev-btn').addEventListener('click', () => {
+        if (currentPage > 1) goToPage(currentPage - 1);
+      });
+
+      document.getElementById('next-btn').addEventListener('click', () => {
+        if (currentPage < totalPages) goToPage(currentPage + 1);
       });
 
       // Typing effect Page 2
-      const message = "Happy birthday to my beautiful Bebo! You light up my world with your smile and fill my days with joy. Every moment with you is special, and I'm so grateful to have you in my life. May your day be as amazing and wonderful as you are. Love you always! 💖🎂";
+      const message =
+        "Happy birthday to my beautiful Bebo! You light up my world with your smile and fill my days with joy. Every moment with you is special, and I'm so grateful to have you in my life. May your day be as amazing and wonderful as you are. Love you always! 💖🎂";
+      let typingIndex = 0;
       const typingBox = document.getElementById("typing-box");
 
       function startTyping() {
         typingBox.textContent = "";
-        let typingIndex = 0;
+        typingIndex = 0;
         const typingInterval = setInterval(() => {
           if (typingIndex < message.length) {
             typingBox.textContent += message[typingIndex];
@@ -963,6 +1527,7 @@
         const galleryContainer = document.getElementById("gallery-container");
         galleryContainer.innerHTML = "";
 
+        // Your original photo and video links
         const mediaItems = [
           {
             type: "image",
@@ -974,9 +1539,97 @@
             src: "photos/WhatsApp Image 2025-10-10 at 07.40.35.jpeg",
             caption: "My Bebo",
           },
-          // Add your other media items here...
+          {
+            type: "image",
+            src: "photos/WhatsApp Image 2025-10-10 at 07.40.36 (1).jpeg",
+            caption: "Just Us Two",
+          },
+          {
+            type: "image",
+            src: "photos/WhatsApp Image 2025-10-10 at 07.40.36.jpeg",
+            caption: "Heart to Heart",
+          },
+          {
+            type: "image",
+            src: "photos/WhatsApp Image 2025-10-10 at 07.40.37 (1).jpeg",
+            caption: "You & Me",
+          },
+          {
+            type: "image",
+            src: "photos/WhatsApp Image 2025-10-10 at 07.40.37.jpeg",
+            caption: "Soul Connection",
+          },
+          {
+            type: "image",
+            src: "photos/WhatsApp Image 2025-10-10 at 07.40.38 (1).jpeg",
+            caption: "Sweetheart",
+          },
+          {
+            type: "image",
+            src: "photos/WhatsApp Image 2025-10-10 at 07.40.38.jpeg",
+            caption: "Making Memories",
+          },
+          {
+            type: "image",
+            src: "photos/WhatsApp Image 2025-10-10 at 07.40.39.jpeg",
+            caption: "Our Story",
+          },
+          {
+            type: "image",
+            src: "photos/WhatsApp Image 2025-10-10 at 07.40.40 (1).jpeg",
+            caption: "Comfort Zone",
+          },
+          {
+            type: "image",
+            src: "photos/WhatsApp Image 2025-10-10 at 07.40.40.jpeg",
+            caption: "Cozy Moments",
+          },
+          {
+            type: "image",
+            src: "photos/WhatsApp Image 2025-10-10 at 07.40.41 (1).jpeg",
+            caption: "Home Is You",
+          },
+          {
+            type: "image",
+            src: "photos/WhatsApp Image 2025-10-10 at 07.40.41 (2).jpeg",
+            caption: "Smile Sessions",
+          },
+          {
+            type: "image",
+            src: "photos/WhatsApp Image 2025-10-10 at 07.40.41.jpeg",
+            caption: "Bebo",
+          },
+          {
+            type: "image",
+            src: "photos/WhatsApp Image 2025-10-10 at 07.40.42.jpeg",
+            caption: "My sweetheart",
+          },
+          {
+            type: "image",
+            src: "photos/WhatsApp Image 2025-10-10 at 07.40.43.jpeg",
+            caption: "My Person",
+          },
+          {
+            type: "image",
+            src: "photos/WhatsApp Image 2025-10-10 at 18.17.19.jpeg",
+            caption: "Best Part",
+          },
+          {
+            type: "video",
+            src: "photos/WhatsApp Video 2025-10-10 at 07.40.43.mp4",
+            caption: "My love bebo",
+          },
+          {
+            type: "video",
+            src: "photos/WhatsApp Video 2025-10-10 at 07.40.44 (1).mp4",
+            caption: "My love",
+          },
+          {
+            type: "video",
+            src: "photos/WhatsApp Video 2025-10-10 at 07.40.44.mp4",
+            caption: "Darling",
+          },
         ];
-
         mediaItems.forEach((item, index) => {
           const photoCard = document.createElement("div");
           photoCard.className = "photo-card";
@@ -1009,18 +1662,22 @@
           galleryContainer.appendChild(photoCard);
         });
 
-        // Add click event to expand media
+        // Add click event to expand media - FIXED
         document.querySelectorAll(".photo-card").forEach((card) => {
           card.addEventListener("click", function () {
             const index = this.dataset.index;
             const item = mediaItems[index];
 
+            // Create expanded media overlay
             const expandedOverlay = document.createElement("div");
             expandedOverlay.className = "media-expanded-overlay";
 
+            // Create expanded media element
             const expandedMedia = document.createElement("div");
             expandedMedia.className = "media-expanded";
+            expandedMedia.dataset.index = index;
 
+            // Close button
             const closeBtn = document.createElement("button");
             closeBtn.className = "close-expanded";
             closeBtn.innerHTML = "×";
@@ -1030,6 +1687,7 @@
             });
             expandedMedia.appendChild(closeBtn);
 
+            // Media content
             if (item.type === "image") {
               const img = document.createElement("img");
               img.src = item.src;
@@ -1048,14 +1706,19 @@
               expandedMedia.appendChild(video);
             }
 
+            // Caption
             const caption = document.createElement("div");
             caption.className = "media-expanded-caption";
             caption.textContent = item.caption;
             expandedMedia.appendChild(caption);
 
+            // Add to overlay
             expandedOverlay.appendChild(expandedMedia);
+
+            // Add to body
             document.body.appendChild(expandedOverlay);
 
+            // Close on overlay click
             expandedOverlay.addEventListener("click", function (e) {
               if (e.target === expandedOverlay) {
                 expandedOverlay.remove();
@@ -1063,16 +1726,177 @@
             });
           });
         });
+
+        // Initialize Intersection Observer for videos
+        const videoObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                const video = entry.target;
+                if (video.tagName === "VIDEO") {
+                  video
+                    .play()
+                    .catch((e) => console.log("Video autoplay failed:", e));
+                }
+              } else {
+                const video = entry.target;
+                if (video.tagName === "VIDEO") {
+                  video.pause();
+                }
+              }
+            });
+          },
+          { threshold: 0.5 }
+        );
+
+        // Observe all videos in the gallery
+        document.querySelectorAll(".photo-card video").forEach((video) => {
+          videoObserver.observe(video);
+        });
       }
 
-      // Celebration effects for page 8
-      document.getElementById("celebrate-btn").addEventListener("click", () => {
-        const celebrateBox = document.getElementById("celebrate-box");
-        celebrateBox.classList.add("closing");
+      // Celebration effects
+      function createFirework(x, y) {
+        const firework = document.createElement("div");
+        firework.className = "celebration-firework";
+        firework.style.left = x + "px";
+        firework.style.top = y + "px";
+        firework.style.backgroundColor = `hsl(${
+          Math.random() * 360
+        }, 100%, 50%)`;
+
+        document.getElementById("page-8").appendChild(firework);
+
+        // Animate firework
+        firework.animate(
+          [
+            { transform: "scale(0)", opacity: 1 },
+            { transform: "scale(20)", opacity: 0 },
+          ],
+          {
+            duration: 1000,
+            easing: "ease-out",
+          }
+        );
 
         setTimeout(() => {
+          if (firework.parentNode) firework.remove();
+        }, 1000);
+      }
+
+      function createSparkle() {
+        const sparkle = document.createElement("div");
+        sparkle.className = "celebration-sparkle";
+        sparkle.textContent = "✨";
+        sparkle.style.left = Math.random() * 90 + "%";
+        sparkle.style.top = Math.random() * 90 + "%";
+
+        document.getElementById("page-8").appendChild(sparkle);
+
+        setTimeout(() => {
+          if (sparkle.parentNode) sparkle.remove();
+        }, 2000);
+      }
+
+      function createFlower() {
+        const flower = document.createElement("div");
+        flower.className = "celebration-flower";
+        const flowers = ["🌸", "🌺", "🌷", "🌹", "💐", "🌼", "🌻"];
+        flower.textContent =
+          flowers[Math.floor(Math.random() * flowers.length)];
+        flower.style.left = Math.random() * 90 + "%";
+        flower.style.fontSize = Math.random() * 20 + 15 + "px";
+
+        document.getElementById("page-8").appendChild(flower);
+
+        setTimeout(() => {
+          if (flower.parentNode) flower.remove();
+        }, 4000);
+      }
+
+      function createCelebrationMessage() {
+        const messages = [
+          "Happy Birthday! 🎂",
+          "You're Amazing! 💖",
+          "Best Day Ever! 🌟",
+          "So Special! ✨",
+          "Love You! 💕",
+          "Enjoy! 🥳",
+        ];
+
+        const message = document.createElement("div");
+        message.className = "celebration-message";
+        message.textContent =
+          messages[Math.floor(Math.random() * messages.length)];
+        message.style.left = Math.random() * 70 + "%";
+        message.style.top = Math.random() * 70 + "%";
+
+        document.getElementById("page-8").appendChild(message);
+
+        setTimeout(() => {
+          if (message.parentNode) message.remove();
+        }, 3000);
+      }
+
+      // Enhanced celebration function
+      document.getElementById("celebrate-btn").addEventListener("click", () => {
+        const celebrateBox = document.getElementById("celebrate-box");
+        const page8 = document.getElementById("page-8");
+
+        // Add closing animation to the center box
+        celebrateBox.classList.add("closing");
+
+        // Wait for the closing animation to complete before starting celebrations
+        setTimeout(() => {
+          // Hide the center box
           celebrateBox.style.display = "none";
-        }, 500);
+
+          // Create multiple types of effects
+          for (let i = 0; i < 50; i++) {
+            setTimeout(() => {
+              // Fireworks
+              createFirework(
+                Math.random() * window.innerWidth,
+                Math.random() * window.innerHeight
+              );
+            }, i * 100);
+          }
+
+          for (let i = 0; i < 30; i++) {
+            setTimeout(() => {
+              // Sparkles
+              createSparkle();
+            }, i * 150);
+          }
+
+          for (let i = 0; i < 20; i++) {
+            setTimeout(() => {
+              // Flowers
+              createFlower();
+            }, i * 200);
+          }
+
+          for (let i = 0; i < 10; i++) {
+            setTimeout(() => {
+              // Messages
+              createCelebrationMessage();
+            }, i * 500);
+          }
+
+          // Add background color animation
+          page8.animate(
+            [
+              { background: "linear-gradient(135deg,#fff9c4,#fff59d,#fff176)" },
+              { background: "linear-gradient(135deg,#ff9a9e,#fad0c4,#fad0c4)" },
+              { background: "linear-gradient(135deg,#a1c4fd,#c2e9fb,#c2e9fb)" },
+              { background: "linear-gradient(135deg,#fff9c4,#fff59d,#fff176)" },
+            ],
+            {
+              duration: 4000,
+              iterations: 2,
+            }
+          );
+        }, 500); // Wait for the closing animation to complete
       });
 
       // Initialize gallery when page loads
