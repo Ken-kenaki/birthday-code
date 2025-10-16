@@ -46,6 +46,68 @@
         transform: rotateY(180deg);
       }
 
+      /* Music Popup */
+      .music-popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        backdrop-filter: blur(5px);
+      }
+
+      .music-popup-content {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        max-width: 300px;
+        width: 90%;
+      }
+
+      .music-popup h3 {
+        color: #ff6b6b;
+        margin-bottom: 15px;
+        font-size: 1.3rem;
+      }
+
+      .music-popup-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 20px;
+      }
+
+      .music-popup-btn {
+        padding: 10px 20px;
+        border-radius: 50px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        min-width: 80px;
+      }
+
+      .music-popup-yes {
+        background: #ff6b6b;
+        color: white;
+      }
+
+      .music-popup-no {
+        background: #e0e0e0;
+        color: #555;
+      }
+
+      .music-popup-btn:hover {
+        transform: scale(1.05);
+      }
+
       /* RESPONSIVE PAGINATION */
       .pagination-container {
         position: fixed;
@@ -93,47 +155,6 @@
       .pagination-dot:hover {
         transform: translateY(-2px);
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-      }
-
-      /* Music Player */
-      .music-player {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1000;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        background: rgba(255, 255, 255, 0.9);
-        padding: 10px 15px;
-        border-radius: 50px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      }
-
-      .music-toggle {
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        background: #ff6b6b;
-        border: none;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        font-size: 18px;
-        transition: all 0.3s ease;
-      }
-
-      .music-toggle:hover {
-        transform: scale(1.1);
-        background: #ff5252;
-      }
-
-      .music-info {
-        font-size: 14px;
-        color: #ff6b6b;
-        font-weight: 600;
       }
 
       /* Rose background pattern */
@@ -955,16 +976,6 @@
           font-size: clamp(1.8rem, 8vw, 2.5rem);
         }
 
-        .music-player {
-          top: 15px;
-          right: 15px;
-          padding: 8px 12px;
-        }
-
-        .music-info {
-          font-size: 12px;
-        }
-
         .pagination-container {
           padding: 12px 8px;
           gap: 6px;
@@ -1033,16 +1044,6 @@
 
         .calendar-day {
           padding: 5px;
-        }
-
-        .music-player {
-          top: 10px;
-          right: 10px;
-          padding: 6px 10px;
-        }
-
-        .music-info {
-          display: none;
         }
 
         .pagination-container {
@@ -1177,18 +1178,26 @@
     </style>
   </head>
   <body>
-    <!-- Music Player -->
-    <div class="music-player">
-      <button class="music-toggle" id="music-toggle">♪</button>
-      <div class="music-info" id="music-info">Tap ♪ for music</div>
-      <audio id="background-music" preload="metadata" playsinline webkit-playsinline>
-        <source
-          src="photos/birthday.mp3"
-          type="audio/mpeg"
-        />
-        Your browser does not support the audio element.
-      </audio>
+    <!-- Music Popup -->
+    <div class="music-popup" id="music-popup">
+      <div class="music-popup-content">
+        <h3>🎵 Background Music 🎵</h3>
+        <p>Would you like to play background music?</p>
+        <div class="music-popup-buttons">
+          <button class="music-popup-btn music-popup-yes" id="music-yes">Yes</button>
+          <button class="music-popup-btn music-popup-no" id="music-no">No</button>
+        </div>
+      </div>
     </div>
+
+    <!-- Background Music -->
+    <audio id="background-music" preload="metadata" playsinline webkit-playsinline loop>
+      <source
+        src="photos/birthday.mp3"
+        type="audio/mpeg"
+      />
+      Your browser does not support the audio element.
+    </audio>
 
     <!-- PAGE 1 -->
     <div class="page page-1" id="page-1">
@@ -1377,12 +1386,49 @@
     </div>
 
     <script>
+      // Show music popup on page load
+      document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('music-popup').style.display = 'flex';
+      });
+
+      // Music functionality
+      const backgroundMusic = document.getElementById("background-music");
+      let musicPlaying = false;
+      let musicEnabled = false;
+
+      // Music popup handlers
+      document.getElementById('music-yes').addEventListener('click', function() {
+        document.getElementById('music-popup').style.display = 'none';
+        musicEnabled = true;
+        // Initialize music but don't play yet
+        backgroundMusic.volume = 0.7;
+        console.log("Music enabled - ready to play on user interaction");
+      });
+
+      document.getElementById('music-no').addEventListener('click', function() {
+        document.getElementById('music-popup').style.display = 'none';
+        musicEnabled = false;
+        console.log("Music disabled");
+      });
+
       // Card flip functionality - FIXED for iOS
       const birthdayCard = document.getElementById("birthday-card");
 
       // Unified function for both touch and click
       function flipCard() {
           this.classList.toggle("flipped");
+          
+          // If music is enabled, start playing on first interaction
+          if (musicEnabled && !musicPlaying) {
+            backgroundMusic.play()
+              .then(() => {
+                musicPlaying = true;
+                console.log("Music started on card flip");
+              })
+              .catch(error => {
+                console.log("Failed to play music:", error);
+              });
+          }
       }
 
       // Add both event listeners with proper options
@@ -1850,67 +1896,6 @@
           );
         }, 500); // Wait for the closing animation to complete
       });
-
-      // Music functionality - FIXED for iOS
-      const musicToggle = document.getElementById("music-toggle");
-      const musicInfo = document.getElementById("music-info");
-      const backgroundMusic = document.getElementById("background-music");
-      let musicPlaying = false;
-      let musicInitialized = false;
-
-      // Function to initialize and play music
-      function initializeMusic() {
-          if (musicInitialized) return;
-          
-          backgroundMusic.volume = 0.7;
-          musicInitialized = true;
-          console.log("Music initialized - ready to play on user interaction");
-      }
-
-      // Function to toggle music playback
-      function toggleMusic() {
-          if (!musicInitialized) {
-              initializeMusic();
-          }
-          
-          if (musicPlaying) {
-              backgroundMusic.pause();
-              musicInfo.textContent = "Music: Off";
-              musicPlaying = false;
-              musicToggle.textContent = "♪";
-          } else {
-              backgroundMusic.play()
-                  .then(() => {
-                      musicPlaying = true;
-                      musicInfo.textContent = "Music: On";
-                      musicToggle.textContent = "🔊";
-                      console.log("Music started successfully");
-                  })
-                  .catch(error => {
-                      console.log("Failed to play music:", error);
-                      musicInfo.textContent = "Tap to play";
-                      musicToggle.textContent = "♪";
-                  });
-          }
-      }
-
-      // Add click event to music toggle
-      musicToggle.addEventListener("click", toggleMusic);
-      musicToggle.addEventListener("touchstart", function(e) {
-          e.preventDefault();
-          toggleMusic();
-      }, { passive: false });
-
-      // Initialize music on first user interaction with the document
-      function initOnFirstTouch() {
-          initializeMusic();
-          document.removeEventListener('click', initOnFirstTouch);
-          document.removeEventListener('touchstart', initOnFirstTouch);
-      }
-
-      // Listen for first user interaction
-      document.addEventListener('click', initOnFirstTouch, { once: true });
-      document.addEventListener('touchstart', initOnFirstTouch, { once: true });
 
       // Initialize gallery when page loads
       document.addEventListener("DOMContentLoaded", function () {
