@@ -1421,16 +1421,31 @@
         console.log("Music disabled");
       });
 
-      // **FIXED CARD FLIP - UNIVERSAL COMPATIBILITY**
+     // **FIXED CARD FLIP - UNIVERSAL COMPATIBILITY**
       const birthdayCard = document.getElementById("birthday-card");
       let cardFlipped = false;
+      let touchStartTime = 0;
 
-      function flipCard() {
+      function flipCard(e) {
+        // Prevent any default behavior
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        
         console.log("Card flip triggered");
         
         // Toggle flip state
         cardFlipped = !cardFlipped;
-        birthdayCard.classList.toggle("flipped", cardFlipped);
+        
+        // Force a reflow before adding the class (iOS fix)
+        void birthdayCard.offsetWidth;
+        
+        if (cardFlipped) {
+          birthdayCard.classList.add("flipped");
+        } else {
+          birthdayCard.classList.remove("flipped");
+        }
         
         // If music is enabled, start playing on first interaction
         if (musicEnabled && !musicPlaying) {
@@ -1445,21 +1460,38 @@
         }
       }
 
+      // **iOS-OPTIMIZED EVENT HANDLING**
+      
+      // Detect if device is iOS
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      
+      if (isIOS) {
+        // iOS-specific touch handling
+        let touchMoved = false;
+        
+        birthdayCard.addEventListener("touchstart", function(e) {
+          touchMoved = false;
+          touchStartTime = Date.now();
+        }, { passive: true });
+        
+        birthdayCard.addEventListener("touchmove", function(e) {
+          touchMoved = true;
+        }, { passive: true });
+        
+        birthdayCard.addEventListener("touchend", function(e) {
+          // Only flip if it was a tap (not a swipe) and was quick
+          if (!touchMoved && (Date.now() - touchStartTime) < 500) {
+            flipCard(e);
+          }
+        }, { passive: false });
+      } else {
+        // Non-iOS devices - use click
+        birthdayCard.addEventListener("click", flipCard);
+      }
+      
+      // Add cursor pointer for desktop
+      birthdayCard.style.cursor = "pointer";
       // **UNIVERSAL EVENT HANDLING - WORKS ON ALL DEVICES**
-      
-      // Click event (for mouse and touch devices that convert touch to click)
-      birthdayCard.addEventListener("click", flipCard);
-      
-      // Touch events (for mobile devices)
-      birthdayCard.addEventListener("touchstart", function(e) {
-        // Prevent default to avoid double-tap zoom and other browser behaviors
-        e.preventDefault();
-      }, { passive: false });
-      
-      birthdayCard.addEventListener("touchend", function(e) {
-        e.preventDefault();
-        flipCard();
-      }, { passive: false });
 
       // Navigation
       const pages = document.querySelectorAll(".page");
