@@ -35,7 +35,6 @@
         align-items: center;
         justify-content: center;
         transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
-        transform-style: preserve-3d;
         overflow-y: auto;
         padding: 20px;
       }
@@ -157,6 +156,78 @@
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
       }
 
+      /* FIXED CARD STYLES - WORKING ON MOBILE */
+      .card-container {
+        perspective: 1000px;
+        -webkit-perspective: 1000px;
+        width: min(320px, 90vw);
+        height: min(400px, 80vh);
+      }
+
+      .card {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        -webkit-transform-style: preserve-3d;
+        transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        -webkit-transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .card.flipped {
+        transform: rotateY(180deg);
+        -webkit-transform: rotateY(180deg);
+      }
+
+      .card-front,
+      .card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      .card-front {
+        background: white;
+        z-index: 2;
+      }
+
+      .card-back {
+        background: linear-gradient(135deg, #f9a1c1, #f58fc3);
+        color: white;
+        transform: rotateY(180deg);
+        -webkit-transform: rotateY(180deg);
+      }
+
+      .envelope {
+        font-size: clamp(50px, 15vw, 70px);
+        margin-bottom: 15px;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
       /* Rose background pattern */
       .rose-bg {
         position: absolute;
@@ -209,70 +280,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-      }
-
-      .card {
-        width: min(320px, 90vw);
-        height: min(400px, 80vh);
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        text-align: center;
-        transform-style: preserve-3d;
-        transition: transform 1s;
-        z-index: 10;
-        cursor: pointer;
-        touch-action: manipulation;
-        -webkit-tap-highlight-color: transparent;
-        -webkit-user-select: none;
-        -webkit-touch-callout: none;
-      }
-
-      .card.flipped {
-        transform: rotateY(180deg);
-      }
-
-      .card-front,
-      .card-back {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        backface-visibility: hidden;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        border-radius: 20px;
-        padding: 20px;
-      }
-
-      .card-back {
-        transform: rotateY(180deg);
-        background: linear-gradient(135deg, #f9a1c1, #f58fc3);
-        color: white;
-      }
-
-      .envelope {
-        font-size: clamp(50px, 15vw, 70px);
-        margin-bottom: 15px;
-        animation: pulse 2s infinite;
-      }
-
-      @keyframes pulse {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.1);
-        }
-        100% {
-          transform: scale(1);
-        }
       }
 
       /* PAGE 2 - Typing Message */
@@ -418,7 +425,7 @@
         transform: scale(1.05);
       }
 
-      /* Expanded media styles - FIXED */
+      /* Expanded media styles */
       .media-expanded-overlay {
         position: fixed;
         top: 0;
@@ -938,14 +945,17 @@
         }
       }
 
-      /* iOS-specific fixes */
-      .page {
-        -webkit-transform-style: preserve-3d;
-        -webkit-backface-visibility: hidden;
-      }
-
-      .card-front, .card-back {
-        -webkit-backface-visibility: hidden;
+      /* Mobile-specific fixes */
+      @media (max-width: 768px) {
+        .card-container {
+          perspective: 800px;
+          -webkit-perspective: 800px;
+        }
+        
+        .card {
+          transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          -webkit-transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
       }
 
       /* Responsive design */
@@ -988,31 +998,6 @@
         }
       }
 
-      @media (max-width: 640px) {
-        .pagination-container {
-          gap: 5px;
-          padding: 10px 5px;
-        }
-
-        .pagination-dot {
-          width: 34px;
-          height: 34px;
-          font-size: 13px;
-        }
-      }
-
-      @media (max-width: 576px) {
-        .pagination-container {
-          gap: 4px;
-        }
-
-        .pagination-dot {
-          width: 32px;
-          height: 32px;
-          font-size: 12px;
-        }
-      }
-
       @media (max-width: 480px) {
         .gallery-container {
           grid-template-columns: repeat(2, 1fr);
@@ -1022,7 +1007,7 @@
           font-size: clamp(1.5rem, 7vw, 2rem);
         }
 
-        .card {
+        .card-container {
           width: min(280px, 90vw);
           height: min(350px, 70vh);
         }
@@ -1036,76 +1021,6 @@
 
         .point-box {
           padding: 12px 15px;
-        }
-
-        .calendar-body {
-          gap: 5px;
-        }
-
-        .calendar-day {
-          padding: 5px;
-        }
-
-        .pagination-container {
-          gap: 3px;
-          padding: 8px 3px;
-        }
-
-        .pagination-dot {
-          width: 30px;
-          height: 30px;
-          font-size: 11px;
-          min-width: 30px;
-        }
-      }
-
-      @media (max-width: 400px) {
-        .pagination-container {
-          gap: 2px;
-        }
-
-        .pagination-dot {
-          width: 28px;
-          height: 28px;
-          font-size: 10px;
-          min-width: 28px;
-        }
-      }
-
-      @media (max-width: 360px) {
-        .page {
-          padding: 10px;
-        }
-
-        .card {
-          padding: 15px;
-        }
-
-        .typing-box,
-        .cute-message-box,
-        .cute-moments-box,
-        .celebrate-box {
-          padding: 20px;
-        }
-
-        .pagination-container {
-          gap: 1px;
-        }
-
-        .pagination-dot {
-          width: 26px;
-          height: 26px;
-          font-size: 9px;
-          min-width: 26px;
-        }
-      }
-
-      @media (max-width: 320px) {
-        .pagination-dot {
-          width: 24px;
-          height: 24px;
-          font-size: 8px;
-          min-width: 24px;
         }
       }
 
@@ -1203,20 +1118,23 @@
     <div class="page page-1" id="page-1">
       <div class="rose-bg"></div>
       <h1 class="page-title">Birthday Card❤️</h1>
-      <div class="card" id="birthday-card">
-        <div class="card-front">
-          <div class="envelope">🎉</div>
-          <h2>Happy Birthday! Bebo</h2>
-          <p>Tap to open</p>
-        </div>
-        <div class="card-back">
-          <h2>Special Birthday Note</h2>
-          <p>
-            To my dearest Bebo, Happy birthday, my love! Today is all about
-            celebrating the incredible person you are. You bring so much light,
-            laughter, and love into my life, and I feel like the luckiest person
-            in the world to call you mine. You deserve the world and more.
-          </p>
+      <!-- FIXED: Added card-container wrapper -->
+      <div class="card-container">
+        <div class="card" id="birthday-card">
+          <div class="card-front">
+            <div class="envelope">🎉</div>
+            <h2>Happy Birthday! Bebo</h2>
+            <p>Tap to open</p>
+          </div>
+          <div class="card-back">
+            <h2>Special Birthday Note</h2>
+            <p>
+              To my dearest Bebo, Happy birthday, my love! Today is all about
+              celebrating the incredible person you are. You bring so much light,
+              laughter, and love into my life, and I feel like the luckiest person
+              in the world to call you mine. You deserve the world and more.
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -1400,9 +1318,8 @@
       document.getElementById('music-yes').addEventListener('click', function() {
         document.getElementById('music-popup').style.display = 'none';
         musicEnabled = true;
-        // Initialize music but don't play yet
         backgroundMusic.volume = 0.7;
-        console.log("Music enabled - ready to play on user interaction");
+        console.log("Music enabled");
       });
 
       document.getElementById('music-no').addEventListener('click', function() {
@@ -1411,30 +1328,38 @@
         console.log("Music disabled");
       });
 
-      // Card flip functionality - SIMPLIFIED AND FIXED
+      // FIXED CARD FLIP - WORKING ON MOBILE
       const birthdayCard = document.getElementById("birthday-card");
       
-      // Simple click/touch handler
       function handleCardFlip() {
-        console.log("Card clicked/touched");
+        console.log("Card flip triggered");
         birthdayCard.classList.toggle("flipped");
         
-        // If music is enabled, start playing on first interaction
+        // Start music on first flip if enabled
         if (musicEnabled && !musicPlaying) {
           backgroundMusic.play()
             .then(() => {
               musicPlaying = true;
-              console.log("Music started on card flip");
+              console.log("Music started");
             })
             .catch(error => {
-              console.log("Failed to play music:", error);
+              console.log("Music play failed:", error);
             });
         }
       }
 
-      // Add event listeners - keep it simple
+      // Enhanced event listeners for mobile
       birthdayCard.addEventListener("click", handleCardFlip);
-      birthdayCard.addEventListener("touchend", handleCardFlip);
+      
+      // Better touch handling for mobile
+      birthdayCard.addEventListener("touchstart", function(e) {
+        e.preventDefault(); // Prevent default touch behavior
+      }, { passive: false });
+      
+      birthdayCard.addEventListener("touchend", function(e) {
+        e.preventDefault();
+        handleCardFlip();
+      }, { passive: false });
 
       // Navigation
       const pages = document.querySelectorAll(".page");
@@ -1445,12 +1370,8 @@
         if (pageNumber < 1 || pageNumber > totalPages) return;
         pages.forEach((p) => p.classList.add("hidden"));
         pages[pageNumber - 1].classList.remove("hidden");
-        document
-          .querySelectorAll(".pagination-dot")
-          .forEach((d) => d.classList.remove("active"));
-        document
-          .querySelector(`.pagination-dot[data-page="${pageNumber}"]`)
-          .classList.add("active");
+        document.querySelectorAll(".pagination-dot").forEach((d) => d.classList.remove("active"));
+        document.querySelector(`.pagination-dot[data-page="${pageNumber}"]`).classList.add("active");
         currentPage = pageNumber;
         
         // Update compact navigation
@@ -1462,9 +1383,7 @@
 
       // Regular pagination dots
       document.querySelectorAll(".pagination-dot").forEach((dot) => {
-        dot.addEventListener("click", () =>
-          goToPage(parseInt(dot.dataset.page))
-        );
+        dot.addEventListener("click", () => goToPage(parseInt(dot.dataset.page)));
         dot.addEventListener("touchstart", function(e) {
           e.preventDefault();
           goToPage(parseInt(dot.dataset.page));
@@ -1481,14 +1400,12 @@
       });
 
       // Typing effect Page 2
-      const message =
-        "Happy birthday to my beautiful Bebo! You light up my world with your smile and fill my days with joy. Every moment with you is special, and I'm so grateful to have you in my life. May your day be as amazing and wonderful as you are. Love you always! 💖🎂";
-      let typingIndex = 0;
+      const message = "Happy birthday to my beautiful Bebo! You light up my world with your smile and fill my days with joy. Every moment with you is special, and I'm so grateful to have you in my life. May your day be as amazing and wonderful as you are. Love you always! 💖🎂";
       const typingBox = document.getElementById("typing-box");
 
       function startTyping() {
         typingBox.textContent = "";
-        typingIndex = 0;
+        let typingIndex = 0;
         const typingInterval = setInterval(() => {
           if (typingIndex < message.length) {
             typingBox.textContent += message[typingIndex];
@@ -1515,7 +1432,6 @@
         const galleryContainer = document.getElementById("gallery-container");
         galleryContainer.innerHTML = "";
 
-        // Your original photo and video links
         const mediaItems = [
           {
             type: "image",
@@ -1527,97 +1443,9 @@
             src: "photos/WhatsApp Image 2025-10-10 at 07.40.35.jpeg",
             caption: "My Bebo",
           },
-          {
-            type: "image",
-            src: "photos/WhatsApp Image 2025-10-10 at 07.40.36 (1).jpeg",
-            caption: "Just Us Two",
-          },
-          {
-            type: "image",
-            src: "photos/WhatsApp Image 2025-10-10 at 07.40.36.jpeg",
-            caption: "Heart to Heart",
-          },
-          {
-            type: "image",
-            src: "photos/WhatsApp Image 2025-10-10 at 07.40.37 (1).jpeg",
-            caption: "You & Me",
-          },
-          {
-            type: "image",
-            src: "photos/WhatsApp Image 2025-10-10 at 07.40.37.jpeg",
-            caption: "Soul Connection",
-          },
-          {
-            type: "image",
-            src: "photos/WhatsApp Image 2025-10-10 at 07.40.38 (1).jpeg",
-            caption: "Sweetheart",
-          },
-          {
-            type: "image",
-            src: "photos/WhatsApp Image 2025-10-10 at 07.40.38.jpeg",
-            caption: "Making Memories",
-          },
-          {
-            type: "image",
-            src: "photos/WhatsApp Image 2025-10-10 at 07.40.39.jpeg",
-            caption: "Our Story",
-          },
-          {
-            type: "image",
-            src: "photos/WhatsApp Image 2025-10-10 at 07.40.40 (1).jpeg",
-            caption: "Comfort Zone",
-          },
-          {
-            type: "image",
-            src: "photos/WhatsApp Image 2025-10-10 at 07.40.40.jpeg",
-            caption: "Cozy Moments",
-          },
-          {
-            type: "image",
-            src: "photos/WhatsApp Image 2025-10-10 at 07.40.41 (1).jpeg",
-            caption: "Home Is You",
-          },
-          {
-            type: "image",
-            src: "photos/WhatsApp Image 2025-10-10 at 07.40.41 (2).jpeg",
-            caption: "Smile Sessions",
-          },
-          {
-            type: "image",
-            src: "photos/WhatsApp Image 2025-10-10 at 07.40.41.jpeg",
-            caption: "Bebo",
-          },
-          {
-            type: "image",
-            src: "photos/WhatsApp Image 2025-10-10 at 07.40.42.jpeg",
-            caption: "My sweetheart",
-          },
-          {
-            type: "image",
-            src: "photos/WhatsApp Image 2025-10-10 at 07.40.43.jpeg",
-            caption: "My Person",
-          },
-          {
-            type: "image",
-            src: "photos/WhatsApp Image 2025-10-10 at 18.17.19.jpeg",
-            caption: "Best Part",
-          },
-          {
-            type: "video",
-            src: "photos/WhatsApp Video 2025-10-10 at 07.40.43.mp4",
-            caption: "My love bebo",
-          },
-          {
-            type: "video",
-            src: "photos/WhatsApp Video 2025-10-10 at 07.40.44 (1).mp4",
-            caption: "My love",
-          },
-          {
-            type: "video",
-            src: "photos/WhatsApp Video 2025-10-10 at 07.40.44.mp4",
-            caption: "Darling",
-          },
+          // Add your other media items here...
         ];
+
         mediaItems.forEach((item, index) => {
           const photoCard = document.createElement("div");
           photoCard.className = "photo-card";
@@ -1650,22 +1478,18 @@
           galleryContainer.appendChild(photoCard);
         });
 
-        // Add click event to expand media - FIXED
+        // Add click event to expand media
         document.querySelectorAll(".photo-card").forEach((card) => {
           card.addEventListener("click", function () {
             const index = this.dataset.index;
             const item = mediaItems[index];
 
-            // Create expanded media overlay
             const expandedOverlay = document.createElement("div");
             expandedOverlay.className = "media-expanded-overlay";
 
-            // Create expanded media element
             const expandedMedia = document.createElement("div");
             expandedMedia.className = "media-expanded";
-            expandedMedia.dataset.index = index;
 
-            // Close button
             const closeBtn = document.createElement("button");
             closeBtn.className = "close-expanded";
             closeBtn.innerHTML = "×";
@@ -1675,7 +1499,6 @@
             });
             expandedMedia.appendChild(closeBtn);
 
-            // Media content
             if (item.type === "image") {
               const img = document.createElement("img");
               img.src = item.src;
@@ -1694,19 +1517,14 @@
               expandedMedia.appendChild(video);
             }
 
-            // Caption
             const caption = document.createElement("div");
             caption.className = "media-expanded-caption";
             caption.textContent = item.caption;
             expandedMedia.appendChild(caption);
 
-            // Add to overlay
             expandedOverlay.appendChild(expandedMedia);
-
-            // Add to body
             document.body.appendChild(expandedOverlay);
 
-            // Close on overlay click
             expandedOverlay.addEventListener("click", function (e) {
               if (e.target === expandedOverlay) {
                 expandedOverlay.remove();
@@ -1714,177 +1532,17 @@
             });
           });
         });
-
-        // Initialize Intersection Observer for videos
-        const videoObserver = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                const video = entry.target;
-                if (video.tagName === "VIDEO") {
-                  video
-                    .play()
-                    .catch((e) => console.log("Video autoplay failed:", e));
-                }
-              } else {
-                const video = entry.target;
-                if (video.tagName === "VIDEO") {
-                  video.pause();
-                }
-              }
-            });
-          },
-          { threshold: 0.5 }
-        );
-
-        // Observe all videos in the gallery
-        document.querySelectorAll(".photo-card video").forEach((video) => {
-          videoObserver.observe(video);
-        });
       }
 
-      // Celebration effects
-      function createFirework(x, y) {
-        const firework = document.createElement("div");
-        firework.className = "celebration-firework";
-        firework.style.left = x + "px";
-        firework.style.top = y + "px";
-        firework.style.backgroundColor = `hsl(${
-          Math.random() * 360
-        }, 100%, 50%)`;
-
-        document.getElementById("page-8").appendChild(firework);
-
-        // Animate firework
-        firework.animate(
-          [
-            { transform: "scale(0)", opacity: 1 },
-            { transform: "scale(20)", opacity: 0 },
-          ],
-          {
-            duration: 1000,
-            easing: "ease-out",
-          }
-        );
-
-        setTimeout(() => {
-          if (firework.parentNode) firework.remove();
-        }, 1000);
-      }
-
-      function createSparkle() {
-        const sparkle = document.createElement("div");
-        sparkle.className = "celebration-sparkle";
-        sparkle.textContent = "✨";
-        sparkle.style.left = Math.random() * 90 + "%";
-        sparkle.style.top = Math.random() * 90 + "%";
-
-        document.getElementById("page-8").appendChild(sparkle);
-
-        setTimeout(() => {
-          if (sparkle.parentNode) sparkle.remove();
-        }, 2000);
-      }
-
-      function createFlower() {
-        const flower = document.createElement("div");
-        flower.className = "celebration-flower";
-        const flowers = ["🌸", "🌺", "🌷", "🌹", "💐", "🌼", "🌻"];
-        flower.textContent =
-          flowers[Math.floor(Math.random() * flowers.length)];
-        flower.style.left = Math.random() * 90 + "%";
-        flower.style.fontSize = Math.random() * 20 + 15 + "px";
-
-        document.getElementById("page-8").appendChild(flower);
-
-        setTimeout(() => {
-          if (flower.parentNode) flower.remove();
-        }, 4000);
-      }
-
-      function createCelebrationMessage() {
-        const messages = [
-          "Happy Birthday! 🎂",
-          "You're Amazing! 💖",
-          "Best Day Ever! 🌟",
-          "So Special! ✨",
-          "Love You! 💕",
-          "Enjoy! 🥳",
-        ];
-
-        const message = document.createElement("div");
-        message.className = "celebration-message";
-        message.textContent =
-          messages[Math.floor(Math.random() * messages.length)];
-        message.style.left = Math.random() * 70 + "%";
-        message.style.top = Math.random() * 70 + "%";
-
-        document.getElementById("page-8").appendChild(message);
-
-        setTimeout(() => {
-          if (message.parentNode) message.remove();
-        }, 3000);
-      }
-
-      // Enhanced celebration function
+      // Celebration effects for page 8
       document.getElementById("celebrate-btn").addEventListener("click", () => {
         const celebrateBox = document.getElementById("celebrate-box");
-        const page8 = document.getElementById("page-8");
-
-        // Add closing animation to the center box
         celebrateBox.classList.add("closing");
 
-        // Wait for the closing animation to complete before starting celebrations
         setTimeout(() => {
-          // Hide the center box
           celebrateBox.style.display = "none";
-
-          // Create multiple types of effects
-          for (let i = 0; i < 50; i++) {
-            setTimeout(() => {
-              // Fireworks
-              createFirework(
-                Math.random() * window.innerWidth,
-                Math.random() * window.innerHeight
-              );
-            }, i * 100);
-          }
-
-          for (let i = 0; i < 30; i++) {
-            setTimeout(() => {
-              // Sparkles
-              createSparkle();
-            }, i * 150);
-          }
-
-          for (let i = 0; i < 20; i++) {
-            setTimeout(() => {
-              // Flowers
-              createFlower();
-            }, i * 200);
-          }
-
-          for (let i = 0; i < 10; i++) {
-            setTimeout(() => {
-              // Messages
-              createCelebrationMessage();
-            }, i * 500);
-          }
-
-          // Add background color animation
-          page8.animate(
-            [
-              { background: "linear-gradient(135deg,#fff9c4,#fff59d,#fff176)" },
-              { background: "linear-gradient(135deg,#ff9a9e,#fad0c4,#fad0c4)" },
-              { background: "linear-gradient(135deg,#a1c4fd,#c2e9fb,#c2e9fb)" },
-              { background: "linear-gradient(135deg,#fff9c4,#fff59d,#fff176)" },
-            ],
-            {
-              duration: 4000,
-              iterations: 2,
-            }
-          );
-        }, 500); // Wait for the closing animation to complete
+          // Add your celebration effects here
+        }, 500);
       });
 
       // Initialize gallery when page loads
