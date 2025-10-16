@@ -1411,40 +1411,30 @@
         console.log("Music disabled");
       });
 
-      // Card flip functionality - FIXED for iOS
+      // Card flip functionality - SIMPLIFIED AND FIXED
       const birthdayCard = document.getElementById("birthday-card");
-
-      // Unified function for both touch and click
-      function flipCard() {
-          this.classList.toggle("flipped");
-          
-          // If music is enabled, start playing on first interaction
-          if (musicEnabled && !musicPlaying) {
-            backgroundMusic.play()
-              .then(() => {
-                musicPlaying = true;
-                console.log("Music started on card flip");
-              })
-              .catch(error => {
-                console.log("Failed to play music:", error);
-              });
-          }
+      
+      // Simple click/touch handler
+      function handleCardFlip() {
+        console.log("Card clicked/touched");
+        birthdayCard.classList.toggle("flipped");
+        
+        // If music is enabled, start playing on first interaction
+        if (musicEnabled && !musicPlaying) {
+          backgroundMusic.play()
+            .then(() => {
+              musicPlaying = true;
+              console.log("Music started on card flip");
+            })
+            .catch(error => {
+              console.log("Failed to play music:", error);
+            });
+        }
       }
 
-      // Add both event listeners with proper options
-      birthdayCard.addEventListener("click", flipCard);
-      birthdayCard.addEventListener('touchstart', flipCard, { 
-          passive: true, // Important for iOS performance
-          capture: false 
-      });
-
-      // Also add touch event to the entire page-1 for better touch area
-      document.getElementById('page-1').addEventListener('touchstart', function(e) {
-          // If the touch is on the card or near it, flip the card
-          if (e.target === birthdayCard || birthdayCard.contains(e.target)) {
-              flipCard.call(birthdayCard);
-          }
-      }, { passive: true });
+      // Add event listeners - keep it simple
+      birthdayCard.addEventListener("click", handleCardFlip);
+      birthdayCard.addEventListener("touchend", handleCardFlip);
 
       // Navigation
       const pages = document.querySelectorAll(".page");
